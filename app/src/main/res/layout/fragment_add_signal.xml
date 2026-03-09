@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditText
+        android:id="@+id/etSignalName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/etSignalScore1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Green"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/etSignalName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/etSignalScore2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Orange"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/etSignalScore1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/etSignalScore3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Red"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/etSignalScore2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:text="Add"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/etSignalScore3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

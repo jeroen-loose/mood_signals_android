@@ -6,16 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
 import com.loosethread.moodsignals.databinding.FragmentSignalsBinding
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class FragmentSignals : Fragment() {
+class FragmentAddSignal : Fragment() {
 
-    private var _binding: FragmentSignalsBinding? = null
-    lateinit var signalAdapter: SignalAdapter
+    private var _binding: FragmentAddSignalBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -26,10 +25,7 @@ class FragmentSignals : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentSignalsBinding.inflate(inflater, container, false)
-        signalAdapter = SignalAdapter(Db.getSignals())
-        binding.rvSignals.adapter = signalAdapter
-        binding.rvSignals.layoutManager = LinearLayoutManager(binding.root.context)
+        _binding = FragmentAddSignalBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -38,7 +34,14 @@ class FragmentSignals : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_SignalsFragment_to_fragmentAddSignal)
+            var scores = mutableListOf<SignalScore>()
+            scores.add(SignalScore(1, binding.etSignalScore1.text.toString()))
+            scores.add(SignalScore(2, binding.etSignalScore2.text.toString()))
+            scores.add(SignalScore(3, binding.etSignalScore3.text.toString()))
+
+            val signal = Signal(binding.etSignalName.text.toString(), scores)
+            Db.addSignal(signal)
+            findNavController().navigate(R.id.action_fragmentAddSignal_to_SignalsFragment)
         }
     }
 

@@ -22,7 +22,15 @@
         tools:layout="@layout/fragment_signals">
 
         <action
-            android:id="@+id/action_SignalsFragment_to_HomeFragment"
-            app:destination="@id/HomeFragment" />
+            android:id="@+id/action_SignalsFragment_to_fragmentAddSignal"
+            app:destination="@id/AddSignalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/AddSignalFragment"
+        android:name="com.loosethread.moodsignals.FragmentAddSignal"
+        android:label="Add Signal" >
+        <action
+            android:id="@+id/action_fragmentAddSignal_to_SignalsFragment"
+            app:destination="@id/SignalsFragment" />
     </fragment>
 </navigation>
