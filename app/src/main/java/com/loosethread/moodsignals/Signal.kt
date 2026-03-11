@@ -1,6 +1,14 @@
 package com.loosethread.moodsignals
 
-data class Signal (
-    val description: String,
-    val scores: List<SignalScore>
-)
+class Signal (
+    var id: Int?,
+    var description: String?,
+    var scores: MutableList<SignalScore>
+) {
+    constructor(id: Int) : this(id, null, mutableListOf<SignalScore>()) {
+        val tmp = Db.getSignal(id)
+        description = tmp.description
+        scores = tmp.scores
+    }
+}
+

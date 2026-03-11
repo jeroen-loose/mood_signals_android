@@ -24,8 +24,20 @@ class FragmentAddSignal : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentAddSignalBinding.inflate(inflater, container, false)
+
+        val id = getArguments()?.getInt("id")
+
+        id?.let {
+            val signal = Db.getSignal(id)
+            binding.etSignalName.setText(signal.description)
+            binding.etSignalScore1.setText(signal.scores[0].description)
+            binding.etSignalScore2.setText(signal.scores[1].description)
+            binding.etSignalScore3.setText(signal.scores[2].description)
+            binding.btnAdd.text = "Save"
+            binding.btnAdd.tag = id
+        }
+
         return binding.root
 
     }
@@ -39,8 +51,13 @@ class FragmentAddSignal : Fragment() {
             scores.add(SignalScore(2, binding.etSignalScore2.text.toString()))
             scores.add(SignalScore(3, binding.etSignalScore3.text.toString()))
 
-            val signal = Signal(binding.etSignalName.text.toString(), scores)
-            Db.addSignal(signal)
+            val signal = Signal(null, binding.etSignalName.text.toString(), scores)
+            if(binding.btnAdd.tag != null) {
+                signal.id = binding.btnAdd.tag as Int?
+                Db.updateSignal(signal)
+            } else {
+                Db.addSignal(signal)
+            }
             findNavController().navigate(R.id.action_fragmentAddSignal_to_SignalsFragment)
         }
     }
