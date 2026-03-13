@@ -20,6 +20,8 @@ object Db {
     fun getSignal(id: Int) : Signal {
         val db = helper.readableDatabase
         val query = "SELECT ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} as active_choice, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} as notification_time_id, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} as score FROM" +
                 " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
@@ -31,12 +33,14 @@ object Db {
 
         val cursor = db.rawQuery(query, params)
 
-        var signal = Signal(id, null, mutableListOf<SignalScore>())
+        var signal = Signal(id, null, mutableListOf<SignalScore>(), null, null)
 
         with(cursor) {
             while (moveToNext()) {
                 if(signal.description.isNullOrEmpty() ) {
                     signal.description = getString(getColumnIndexOrThrow("signal_description"))
+                    signal.activeChoice = getInt(getColumnIndexOrThrow("active_choice")) == 1
+                    signal.notificationTimeId = getInt(getColumnIndexOrThrow("notification_time_id"))
                 }
 
                 val signalScore = SignalScore(
@@ -56,6 +60,8 @@ object Db {
         val db = helper.readableDatabase
         val query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
                 "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
                 " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
@@ -76,7 +82,9 @@ object Db {
                     signal = Signal(
                         newId,
                         getString(getColumnIndexOrThrow("signal_description")),
-                        mutableListOf<SignalScore>()
+                        mutableListOf<SignalScore>(),
+                        getInt(getColumnIndexOrThrow("active_choice")) == 1,
+                        getInt(getColumnIndexOrThrow("notification_time_id"))
                         )
                     signals.add(signal)
                     resultIndex = signals.lastIndex
@@ -119,8 +127,17 @@ object Db {
     fun updateSignal(signal: Signal) {
         val db = helper.writableDatabase
 
-        val query = "UPDATE ${DbContract.Signal.TABLE_NAME} SET ${DbContract.Signal.COLUMN_NAME_DESCRIPTION} = ? WHERE ${BaseColumns._ID} = ?"
-        val params = arrayOf(signal.description.toString(), signal.id.toString())
+        val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                "SET ${DbContract.Signal.COLUMN_NAME_DESCRIPTION} = ?, " +
+                "${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} = ?, " +
+                "${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? " +
+                "WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(
+            signal.description.toString(),
+            signal.activeChoice.toString(),
+            signal.notificationTimeId.toString(),
+            signal.id.toString()
+        )
         var c = db.rawQuery(query, params)
         c.moveToFirst()
 
@@ -136,5 +153,117 @@ object Db {
 
         c.close()
 
+    }
+
+    fun getNotificationTime(id: Int) : NotificationTime {
+        val db = helper.readableDatabase
+        val query = "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} as question, " +
+                "${DbContract.NotificationTime.COLUMN_NAME_TIME} as time, " +
+                "FROM" +
+                "${DbContract.NotificationTime.TABLE_NAME} " +
+                "WHERE ${BaseColumns._ID} = ?"
+
+        val params = arrayOf(id.toString())
+
+        val cursor = db.rawQuery(query, params)
+
+        with(cursor) {
+            moveToNext()
+
+            val notificationTime = NotificationTime(
+                id,
+                getString(getColumnIndexOrThrow("question")),
+                getString(getColumnIndexOrThrow("time"))
+            )
+
+            close()
+
+            return notificationTime
+        }
+    }
+
+    fun getNotificationTimes(): MutableList<NotificationTime> {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.NotificationTime.TABLE_NAME}"
+
+        val cursor = db.rawQuery(query, null)
+        val result = mutableListOf<NotificationTime>()
+
+        with(cursor) {
+            while(moveToNext()) {
+                val notificationTime = NotificationTime(
+                    getInt(getColumnIndexOrThrow(BaseColumns._ID)),
+                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_QUESTION)),
+                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_TIME))
+                )
+
+                result.add(notificationTime)
+            }
+
+            close()
+
+            return result
+        }
+    }
+
+    fun addNotificationTime(question: String, time: String) : Int {
+        val db = helper.writableDatabase
+        val query = "INSERT INTO ${DbContract.NotificationTime.TABLE_NAME}" +
+                "(" +
+                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION}," +
+                "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
+                ") VALUES (" +
+                "'${question}'," +
+                "'${time}'" +
+                ")"
+        val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        c.close()
+
+        return getInsertId()
+    }
+
+    fun updateNotificationTime(id: Int?, question: String?, time: String?) {
+        val db = helper.writableDatabase
+        if (question != null) {
+            val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
+                    "SET question = '${question}' " +
+                    "WHERE ${BaseColumns._ID} = ?"
+            val params = arrayOf(id.toString())
+            val c = db.rawQuery(query, params)
+            c.moveToFirst()
+            c.close()
+        }
+
+        if (time != null) {
+            val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
+                    "SET time = '${time}' " +
+                    "WHERE ${BaseColumns._ID} = ?"
+            val params = arrayOf(id.toString())
+            val c = db.rawQuery(query, params)
+            c.moveToFirst()
+            c.close()
+        }
+    }
+
+    fun deleteNotificationTime(id: Int) {
+        val db = helper.writableDatabase
+        val query = "DELETE FROM ${DbContract.NotificationTime.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun getInsertId(): Int {
+       val db = helper.readableDatabase
+        val query = "SELECT last_insert_rowid() AS id"
+        val c = db.rawQuery(query, null)
+        var id = -1
+        if(c.moveToFirst()){
+            id = c.getInt(c.getColumnIndexOrThrow("id"))
+        }
+        c.close()
+        return id
     }
 }

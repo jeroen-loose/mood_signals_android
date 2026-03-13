@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_HomeFragment_to_SignalsFragment"
             app:destination="@id/SignalsFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_fragmentNotificationTimes"
+            app:destination="@id/fragmentNotificationTimes" />
     </fragment>
     <fragment
         android:id="@+id/SignalsFragment"
@@ -33,4 +36,8 @@
             android:id="@+id/action_fragmentAddSignal_to_SignalsFragment"
             app:destination="@id/SignalsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fragmentNotificationTimes"
+        android:name="com.loosethread.moodnotificationTimes.FragmentNotificationTimes"
+        android:label="FragmentNotificationTimes" />
 </navigation>

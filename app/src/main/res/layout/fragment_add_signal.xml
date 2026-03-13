@@ -48,13 +48,54 @@
         app:layout_constraintRight_toRightOf="parent"
         />
 
+    <TextView
+        android:id="@+id/txtActiveChoice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Active Choice?"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/etSignalScore3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/cbActiveChoice"
+        />
+
+    <CheckBox
+        android:id="@+id/cbActiveChoice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/txtActiveChoice"
+        app:layout_constraintBottom_toBottomOf="@id/txtActiveChoice"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/txtNotificationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification Time"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/txtActiveChoice"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <Spinner
+        android:id="@+id/spNotificationTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        app:layout_constraintTop_toTopOf="@id/txtNotificationTime"
+        app:layout_constraintBottom_toBottomOf="@id/txtNotificationTime"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
     <Button
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
        android:text="Add"
         android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/etSignalScore3"
+        app:layout_constraintTop_toBottomOf="@id/txtNotificationTime"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
