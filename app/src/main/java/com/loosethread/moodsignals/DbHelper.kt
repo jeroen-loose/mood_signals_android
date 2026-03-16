@@ -46,15 +46,18 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
         "CREATE TABLE ${DbContract.NotificationTime.TABLE_NAME} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} TEXT NOT NULL," +
                 "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} TEXT NOT NULL," +
                 "${DbContract.NotificationTime.COLUMN_NAME_TIME} TEXT NOT NULL" +
                 ")",
 
         "INSERT INTO ${DbContract.NotificationTime.TABLE_NAME} (" +
+                "${DbContract.NotificationTime.COLUMN_NAME_TITLE}," +
                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION}, " +
                 "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
                 ") VALUES " +
-                "('How was your day?', '21:00')"
+                "('Morning', 'How did you sleep?', '07:30'), " +
+                "('Evening', 'How was your day?', '21:00')"
     )
 
     private val SQL_DELETE_ENTRIES = arrayOf(

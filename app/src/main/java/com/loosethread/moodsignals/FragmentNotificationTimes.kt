@@ -40,8 +40,8 @@ class FragmentNotificationTimes : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnDone.setOnClickListener {
-            //findNavController().navigate()
+        binding.btnAdd.setOnClickListener {
+            findNavController().navigate(R.id.action_fragmentNotificationTimes_to_fragmentAddNotificationTime)
         }
     }
 

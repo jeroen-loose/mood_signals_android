@@ -1,69 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hsvSignals"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtSignal"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSignals"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/txtScoreGreen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtSignal"
+            app:layout_constraintBottom_toTopOf="@id/btnAdd"
             />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtScoreOrange"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtScoreGreen"
-            />
-
-        <TextView
-            android:id="@+id/txtScoreRed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtScoreOrange"
-            />
-
-        <Button
-            android:id="@+id/btnPrevious"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtScoreRed"
-            android:text="Previous"
-            />
-
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txtScoreRed"
-            android:text="Next"
-            />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</LinearLayout>
+</HorizontalScrollView>

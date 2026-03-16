@@ -48,7 +48,9 @@ class FragmentAddSignal : Fragment() {
             binding.etSignalScore2.setText(signal.scores[1].description)
             binding.etSignalScore3.setText(signal.scores[2].description)
             binding.cbActiveChoice.isChecked = signal.activeChoice!!
-            binding.spNotificationTime.setSelection(notificationTimes.indexOf(Db.getNotificationTime(signal.notificationTimeId!!)))
+            notificationTimes.find { it.id == signal.notificationTimeId }?.let {
+                binding.spNotificationTime.setSelection(notificationTimes.indexOf(it))
+            }
             binding.btnAdd.text = "Save"
             binding.btnAdd.tag = id
         }
@@ -71,7 +73,7 @@ class FragmentAddSignal : Fragment() {
                 binding.etSignalName.text.toString(),
                 scores,
                 binding.cbActiveChoice.isChecked,
-                binding.spNotificationTime.adapter.getItem(binding.spNotificationTime.selectedItemPosition).toString().toInt()
+                (binding.spNotificationTime.selectedItem as NotificationTime).id!!
             )
             if(binding.btnAdd.tag != null) {
                 signal.id = binding.btnAdd.tag as Int?
@@ -79,7 +81,7 @@ class FragmentAddSignal : Fragment() {
             } else {
                 Db.addSignal(signal)
             }
-            findNavController().navigate(R.id.action_fragmentAddSignal_to_SignalsFragment)
+            findNavController().popBackStack()
         }
     }
 

@@ -36,6 +36,10 @@ class FragmentHome : Fragment() {
             findNavController().navigate(R.id.action_HomeFragment_to_SignalsFragment)
         }
 
+        binding.buttonToday.setOnClickListener {
+            findNavController().navigate(R.id.action_HomeFragment_to_fragmentToday)
+        }
+
         binding.btnNotificationTimes.setOnClickListener {
             findNavController().navigate(R.id.action_HomeFragment_to_fragmentNotificationTimes)
         }

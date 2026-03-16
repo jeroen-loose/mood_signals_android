@@ -38,6 +38,7 @@ object DbContract {
 
     object NotificationTime : BaseColumns {
         const val TABLE_NAME = "notification_times"
+        const val COLUMN_NAME_TITLE = "title"
         const val COLUMN_NAME_QUESTION = "question"
         const val COLUMN_NAME_TIME = "time"
     }

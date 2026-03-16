@@ -37,11 +37,9 @@ object Db {
 
         with(cursor) {
             while (moveToNext()) {
-                if(signal.description.isNullOrEmpty() ) {
-                    signal.description = getString(getColumnIndexOrThrow("signal_description"))
-                    signal.activeChoice = getInt(getColumnIndexOrThrow("active_choice")) == 1
-                    signal.notificationTimeId = getInt(getColumnIndexOrThrow("notification_time_id"))
-                }
+                signal.description = getString(getColumnIndexOrThrow("signal_description"))
+                signal.activeChoice = getInt(getColumnIndexOrThrow("active_choice")) == 1
+                signal.notificationTimeId = getInt(getColumnIndexOrThrow("notification_time_id"))
 
                 val signalScore = SignalScore(
                     getInt(getColumnIndexOrThrow("score")),
@@ -109,6 +107,9 @@ object Db {
         val db = helper.writableDatabase
         val values = ContentValues().apply {
             put(DbContract.Signal.COLUMN_NAME_DESCRIPTION, signal.description)
+            put(DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE, signal.activeChoice)
+            put(DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID, signal.notificationTimeId)
+            put(DbContract.Signal.COLUMN_NAME_ARCHIVED, 0)
         }
 
         val newSignalId = db.insert(DbContract.Signal.TABLE_NAME, null, values)
@@ -134,12 +135,13 @@ object Db {
                 "WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(
             signal.description.toString(),
-            signal.activeChoice.toString(),
+            if (signal.activeChoice == true) "1" else "0",
             signal.notificationTimeId.toString(),
             signal.id.toString()
         )
         var c = db.rawQuery(query, params)
         c.moveToFirst()
+        c.close()
 
         signal.scores.forEach { signalScore ->
             val query = "UPDATE ${DbContract.SignalValue.TABLE_NAME} " +
@@ -157,9 +159,11 @@ object Db {
 
     fun getNotificationTime(id: Int) : NotificationTime {
         val db = helper.readableDatabase
-        val query = "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} as question, " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME} as time, " +
-                "FROM" +
+        val query = "SELECT " +
+                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} as title, " +
+                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} as question, " +
+                "${DbContract.NotificationTime.COLUMN_NAME_TIME} as time " +
+                "FROM " +
                 "${DbContract.NotificationTime.TABLE_NAME} " +
                 "WHERE ${BaseColumns._ID} = ?"
 
@@ -172,6 +176,7 @@ object Db {
 
             val notificationTime = NotificationTime(
                 id,
+                getString(getColumnIndexOrThrow("title")),
                 getString(getColumnIndexOrThrow("question")),
                 getString(getColumnIndexOrThrow("time"))
             )
@@ -193,6 +198,7 @@ object Db {
             while(moveToNext()) {
                 val notificationTime = NotificationTime(
                     getInt(getColumnIndexOrThrow(BaseColumns._ID)),
+                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_TITLE)),
                     getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_QUESTION)),
                     getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_TIME))
                 )
@@ -206,15 +212,17 @@ object Db {
         }
     }
 
-    fun addNotificationTime(question: String, time: String) : Int {
+    fun addNotificationTime(notificationTime: NotificationTime) : Int {
         val db = helper.writableDatabase
         val query = "INSERT INTO ${DbContract.NotificationTime.TABLE_NAME}" +
                 "(" +
+                "${DbContract.NotificationTime.COLUMN_NAME_TITLE}," +
                 "${DbContract.NotificationTime.COLUMN_NAME_QUESTION}," +
                 "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
                 ") VALUES (" +
-                "'${question}'," +
-                "'${time}'" +
+                "'${notificationTime.title}'," +
+                "'${notificationTime.question}'," +
+                "'${notificationTime.time}'" +
                 ")"
         val c = db.rawQuery(query, null)
         c.moveToFirst()
@@ -223,27 +231,18 @@ object Db {
         return getInsertId()
     }
 
-    fun updateNotificationTime(id: Int?, question: String?, time: String?) {
+    fun updateNotificationTime(notificationTime: NotificationTime) {
         val db = helper.writableDatabase
-        if (question != null) {
-            val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
-                    "SET question = '${question}' " +
-                    "WHERE ${BaseColumns._ID} = ?"
-            val params = arrayOf(id.toString())
-            val c = db.rawQuery(query, params)
-            c.moveToFirst()
-            c.close()
-        }
-
-        if (time != null) {
-            val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
-                    "SET time = '${time}' " +
-                    "WHERE ${BaseColumns._ID} = ?"
-            val params = arrayOf(id.toString())
-            val c = db.rawQuery(query, params)
-            c.moveToFirst()
-            c.close()
-        }
+        val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
+                "SET " +
+                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} = '${notificationTime.title}', " +
+                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} = '${notificationTime.question}', " +
+                "${DbContract.NotificationTime.COLUMN_NAME_TIME} = '${notificationTime.time}' " +
+                "WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(notificationTime.id.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
     }
 
     fun deleteNotificationTime(id: Int) {
@@ -265,5 +264,9 @@ object Db {
         }
         c.close()
         return id
+    }
+
+    fun reset() {
+        helper.reset()
     }
 }
