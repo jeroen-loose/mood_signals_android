@@ -254,6 +254,67 @@ object Db {
         c.close()
     }
 
+    fun insertDaySignalValue(dayId: Int, signalId: Int, scoreId: Int) {
+        val db = helper.writableDatabase
+        val query = "INSERT OR REPLACE INTO ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "(" +
+                "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, " +
+                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID}, " +
+                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+                ") VALUES (" +
+                "$dayId, " +
+                "$signalId, " +
+                "$scoreId" +
+                ")"
+        val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun getDaySignalValue(dayId: Int, signalId: Int) {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+                "AND ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ?"
+        val params = arrayOf(dayId.toString(), signalId.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun getCurrentDayId() : Int {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.Day.TABLE_NAME} " +
+                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = date('now')"
+                "ORDER BY ${BaseColumns._ID} DESC " +
+                "LIMIT 1"
+        val c = db.rawQuery(query, null)
+        var id : Int
+
+        if(c.moveToFirst()){
+            id = c.getInt(c.getColumnIndexOrThrow(BaseColumns._ID))
+        } else {
+            id = createCurrentDayId()
+        }
+
+        c.close()
+        return id
+    }
+
+    fun createCurrentDayId() : Int {
+        val db = helper.writableDatabase
+        val query = "INSERT INTO ${DbContract.Day.TABLE_NAME} " +
+                "(" +
+                "${DbContract.Day.COLUMN_NAME_DATE}" +
+                ") VALUES (" +
+                "date('now')" +
+                ")"
+        val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        c.close()
+        return getInsertId()
+    }
+
     fun getInsertId(): Int {
        val db = helper.readableDatabase
         val query = "SELECT last_insert_rowid() AS id"

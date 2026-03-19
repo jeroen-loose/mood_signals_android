@@ -15,7 +15,10 @@
         app:layout_constraintTop_toTopOf="@id/tvTime"
         app:layout_constraintBottom_toBottomOf="@id/tvTime"
         app:layout_constraintStart_toStartOf="parent"
-        android:text=""
+        app:layout_constraintEnd_toStartOf="@id/tvTime"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tvTime"
+        android:text="test"
         />
 
     <TextView
@@ -23,8 +26,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@id/tvTitle"
+        app:layout_constraintEnd_toStartOf="@id/ibDelete"
         app:layout_constraintTop_toTopOf="@id/ibDelete"
         app:layout_constraintBottom_toBottomOf="@id/ibDelete"
+        app:layout_constraintLeft_toRightOf="@id/tvTitle"
+        app:layout_constraintRight_toLeftOf="@id/ibDelete"
         />
 
     <ImageButton
@@ -36,7 +42,9 @@
         app:layout_constraintStart_toEndOf="@id/tvTime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvQuestion"
+        app:layout_constraintLeft_toRightOf="@id/tvTime"
+        app:layout_constraintRight_toLeftOf="parent"
         />
 
     <TextView

@@ -2,7 +2,6 @@ package com.loosethread.moodsignals
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.loosethread.moodsignals.databinding.ItemNotificationTimeBinding
 

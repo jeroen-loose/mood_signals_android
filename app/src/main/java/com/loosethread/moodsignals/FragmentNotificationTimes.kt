@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.loosethread.moodsignals.Db
+import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.NotificationTimeAdapter
 import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.databinding.FragmentNotificationTimesBinding
@@ -23,6 +24,7 @@ class FragmentNotificationTimes : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +34,9 @@ class FragmentNotificationTimes : Fragment() {
         _binding = FragmentNotificationTimesBinding.inflate(inflater, container, false)
         notificationTimeAdapter = NotificationTimeAdapter(Db.getNotificationTimes())
         binding.rvNotificationTimes.adapter = notificationTimeAdapter
-        binding.rvNotificationTimes.layoutManager = LinearLayoutManager(binding.root.context)
+        layoutManager = FullWidthLinearLayoutManager(requireContext())
+
+        binding.rvNotificationTimes.layoutManager = layoutManager
         return binding.root
 
     }
