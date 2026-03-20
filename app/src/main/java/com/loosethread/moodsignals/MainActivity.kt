@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         Db.init(applicationContext)
+        DateManager.init("yyyy-MM-dd")
         //Db.reset()
 
         binding = ActivityMainBinding.inflate(layoutInflater)

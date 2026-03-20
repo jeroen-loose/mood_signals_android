@@ -271,6 +271,24 @@ object Db {
         c.close()
     }
 
+    fun getDaySignalValues(dayId: Int) : MutableList<DaySignalValue> {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ?"
+        val params = arrayOf(dayId.toString())
+        val c = db.rawQuery(query, params)
+        var result = mutableListOf<DaySignalValue>()
+        with(c) {
+            while(moveToNext()) {
+               result.add(DaySignalValue( getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
+                    getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
+                    getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE))))
+            }
+        }
+
+        return result
+    }
+
     fun getDaySignalValue(dayId: Int, signalId: Int) {
         val db = helper.readableDatabase
         val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
@@ -282,37 +300,106 @@ object Db {
         c.close()
     }
 
-    fun getCurrentDayId() : Int {
+    fun getDayId(date: String) : Int {
         val db = helper.readableDatabase
         val query = "SELECT * FROM ${DbContract.Day.TABLE_NAME} " +
-                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = date('now')"
+                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = ? "
                 "ORDER BY ${BaseColumns._ID} DESC " +
                 "LIMIT 1"
-        val c = db.rawQuery(query, null)
+        val params = arrayOf(date)
+        val c = db.rawQuery(query, params)
         var id : Int
 
         if(c.moveToFirst()){
             id = c.getInt(c.getColumnIndexOrThrow(BaseColumns._ID))
         } else {
-            id = createCurrentDayId()
+            id = createDayId(date)
         }
 
         c.close()
         return id
     }
 
-    fun createCurrentDayId() : Int {
+    fun createDayId(date: String) : Int {
         val db = helper.writableDatabase
         val query = "INSERT INTO ${DbContract.Day.TABLE_NAME} " +
                 "(" +
                 "${DbContract.Day.COLUMN_NAME_DATE}" +
                 ") VALUES (" +
-                "date('now')" +
+                "?" +
                 ")"
-        val c = db.rawQuery(query, null)
+        val params = arrayOf(date)
+        val c = db.rawQuery(query, params)
         c.moveToFirst()
         c.close()
         return getInsertId()
+    }
+
+    fun dayIsEmpty(dayId: Int) : Boolean {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ?"
+        val params = arrayOf(dayId.toString())
+        val c = db.rawQuery(query, params)
+        val result = c.count == 0
+        c.close()
+        return result
+    }
+
+    fun removeDay(dayId: Int) {
+        val db = helper.writableDatabase
+        val query = "DELETE FROM ${DbContract.Day.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(dayId.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun updateComment(dayId: Int, comment: String?) {
+        val db = helper.writableDatabase
+        var query: String
+        var params: Array<String>
+
+        if (comment.isNullOrEmpty()) {
+            query = "DELETE FROM ${DbContract.DayComment.TABLE_NAME} " +
+                    "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+            params = arrayOf(dayId.toString())
+        } else {
+            val existingComment = getComment(dayId)
+            if (existingComment.isNullOrEmpty()) {
+                query = "INSERT INTO ${DbContract.DayComment.TABLE_NAME} " +
+                        "(" +
+                        "${DbContract.DayComment.COLUMN_NAME_DAY_ID}, " +
+                        "${DbContract.DayComment.COLUMN_NAME_COMMENT}" +
+                        ") VALUES (?, ?)"
+                params = arrayOf(dayId.toString(), comment)
+            } else {
+                query = "UPDATE ${DbContract.DayComment.TABLE_NAME} " +
+                        "SET ${DbContract.DayComment.COLUMN_NAME_COMMENT} = ? " +
+                        "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+                params = arrayOf(comment, dayId.toString())
+            }
+        }
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun getComment(dayId: Int) : String {
+        val db = helper.readableDatabase
+        val query = "SELECT ${DbContract.DayComment.COLUMN_NAME_COMMENT} FROM ${DbContract.DayComment.TABLE_NAME} " +
+                "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+        val params = arrayOf(dayId.toString())
+        val c = db.rawQuery(query, params)
+        var result = ""
+        with(c) {
+            if(moveToFirst()) {
+                result = getString(c.getColumnIndexOrThrow(DbContract.DayComment.COLUMN_NAME_COMMENT))
+            }
+            close()
+        }
+
+        return result
     }
 
     fun getInsertId(): Int {
