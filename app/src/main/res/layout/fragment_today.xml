@@ -14,6 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_vertical"
         >
 
         <TextView
@@ -21,9 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="today"
-            app:layout_constraintTop_toTopOf="@id/ivCalendarIcon"
-            app:layout_constraintBottom_toBottomOf="@id/ivCalendarIcon"
-            app:layout_constraintEnd_toStartOf="@id/ivCalendarIcon"
             />
 
         <ImageView
@@ -32,8 +30,14 @@
             android:layout_height="wrap_content"
             android:src="@drawable/calendar"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintStart_toEndOf="@id/tvDate"
-            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <Spinner
+            android:id="@+id/spNotificationTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
             />
 
     </LinearLayout>

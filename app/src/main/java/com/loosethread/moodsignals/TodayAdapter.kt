@@ -13,16 +13,18 @@ class TodayAdapter(
     private var signals: MutableList<Signal>,
     private var selectedDate: String,
     private val onAllSignalsChecked: () -> Unit
+
 ) : RecyclerView.Adapter<TodayAdapter.TodayViewHolder>() {
     var dayId = Db.getDayId(selectedDate)
     private var daySignalValues = mutableListOf<DaySignalValue>()
+    private lateinit var buttons: List<Button>
 
     inner class TodayViewHolder(private val todayBinding: ItemTodayBinding) : RecyclerView.ViewHolder(todayBinding.root) {
         fun bind(signal: Signal, position: Int) {
             dayId = Db.getDayId(selectedDate)
             daySignalValues = Db.getDaySignalValues(dayId)
 
-            val buttons =  listOf(
+            buttons =  listOf(
                 todayBinding.btnScoreGreen,
                 todayBinding.btnScoreOrange,
                 todayBinding.btnScoreRed
@@ -33,17 +35,21 @@ class TodayAdapter(
                 buttons[index].setText(signal.scores[index].description)
                 if (daySignalValues.any { it.signalId == signal.id && it.score == signal.scores[index].score }) {
                     buttons[index].setTextColor(Color.BLACK)
+                } else {
+                    buttons[index].setTextColor(Color.WHITE)
                 }
 
                 if (position < signals.size - 1) {
                     buttons[index].setOnClickListener {
                         Db.insertDaySignalValue(dayId, signal.id!!, signal.scores[index].score)
+                        updateButtonColors(index)
                         val rv = itemView.parent as? RecyclerView
                         rv?.smoothScrollToPosition(position + 1)
                     }
                 } else {
                     buttons[index].setOnClickListener {
                         Db.insertDaySignalValue(dayId, signal.id!!, signal.scores[index].score)
+                        updateButtonColors(index)
                         onAllSignalsChecked()
                     }
                 }
@@ -73,5 +79,20 @@ class TodayAdapter(
         dayId = Db.getDayId(selectedDate)
         daySignalValues = Db.getDaySignalValues(dayId)
         notifyDataSetChanged()
+    }
+
+    fun updateSignals(signals: MutableList<Signal>) {
+        this.signals = signals
+        notifyDataSetChanged()
+    }
+
+    fun updateButtonColors(index: Int) {
+        for(i in buttons.indices) {
+            if (i == index) {
+                buttons[i].setTextColor(Color.BLACK)
+            } else {
+                buttons[i].setTextColor(Color.WHITE)
+            }
+        }
     }
 }

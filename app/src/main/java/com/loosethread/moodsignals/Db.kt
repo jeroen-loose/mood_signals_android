@@ -54,19 +54,27 @@ object Db {
         return signal
     }
 
-    fun getSignals(): MutableList<Signal> {
+    fun getSignals(notificationTimeId: Int? = null): MutableList<Signal> {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
+        var query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
                 "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
                 " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} "
+        if (notificationTimeId != null) {
+            query += "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? "
+        }
+        query += "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
 
-        val cursor = db.rawQuery(query, null)
+        var params: Array<String>? = null
+        if (notificationTimeId != null) {
+            params = arrayOf(notificationTimeId.toString())
+        }
+
+        val cursor = db.rawQuery(query, params)
         var signals = mutableListOf<Signal>()
 
         with(cursor) {
