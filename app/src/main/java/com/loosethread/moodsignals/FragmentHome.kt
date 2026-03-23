@@ -43,6 +43,10 @@ class FragmentHome : Fragment() {
         binding.btnNotificationTimes.setOnClickListener {
             findNavController().navigate(R.id.action_HomeFragment_to_fragmentNotificationTimes)
         }
+
+        binding.btnLog.setOnClickListener {
+            findNavController().navigate(R.id.action_HomeFragment_to_fragmentLog)
+        }
     }
 
     override fun onDestroyView() {

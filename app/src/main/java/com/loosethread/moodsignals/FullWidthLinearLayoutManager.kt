@@ -21,4 +21,5 @@ class FullWidthLinearLayoutManager : LinearLayoutManager {
     private fun getHorizontalSpace(): Int {
         return getWidth() - getPaddingLeft() - getPaddingRight()
     }
+
 }

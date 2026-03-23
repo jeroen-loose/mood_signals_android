@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_HomeFragment_to_fragmentToday"
             app:destination="@id/fragmentToday" />
+        <action
+            android:id="@+id/action_HomeFragment_to_fragmentLog"
+            app:destination="@id/fragmentLog" />
     </fragment>
     <fragment
         android:id="@+id/SignalsFragment"
@@ -51,4 +54,9 @@
         android:id="@+id/fragmentToday"
         android:name="com.loosethread.moodsignals.FragmentToday"
         android:label="FragmentToday" />
+    <fragment
+        android:id="@+id/fragmentLog"
+        android:name="com.loosethread.moodsignals.FragmentLog"
+        android:label="fragment_log"
+        tools:layout="@layout/fragment_log" />
 </navigation>

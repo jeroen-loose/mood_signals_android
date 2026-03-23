@@ -1,9 +1,10 @@
 package com.loosethread.moodsignals
 
 class DaySignalValue (
-    var dayId: Int,
     var signalId: Int,
-    var score: Int
-) {
-}
+    var score: Int,
+    var signalDescription: String? = null,
+    var scoreDescription: String? = null
+)
+
 

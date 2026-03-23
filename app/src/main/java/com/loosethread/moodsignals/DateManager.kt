@@ -40,7 +40,11 @@ object DateManager {
     */
 
     fun formatForDisplay() : String {
-       return humanReadableFormat.format(selectedDate)
+            return humanReadableFormat.format(selectedDate)
+    }
+
+    fun formatStringForDisplay(dateString: String) : String {
+        return humanReadableFormat.format(sqlFormat.parse(dateString))
     }
 
     fun formatForSql() : String {
