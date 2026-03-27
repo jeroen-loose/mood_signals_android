@@ -8,7 +8,7 @@ import java.util.Locale
 object DateManager {
     private lateinit var sqlFormat : SimpleDateFormat
     private var selectedDate = Date()
-    private val humanReadableFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG, Locale.getDefault())
+    private val humanReadableFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL, Locale.getDefault())
     private var calendar = Calendar.getInstance()
 
     fun init(pattern: String) {

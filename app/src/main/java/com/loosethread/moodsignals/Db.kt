@@ -468,6 +468,59 @@ object Db {
         return result
     }
 
+    fun getDay(id: Int) : Day {
+        val db = helper.readableDatabase
+        val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
+                "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
+                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description," +
+                "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
+                "FROM ${DbContract.Day.TABLE_NAME} " +
+                "INNER JOIN ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
+                "INNER JOIN ${DbContract.Signal.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
+                "INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
+                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} AND " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
+                "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
+                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
+                "WHERE ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ?"
+                "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC, " +
+                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} ASC"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        var result = Day(-1, "", "", mutableListOf<DaySignalValue>())
+
+        with(c) {
+            while(moveToNext()) {
+                val newId = getInt(c.getColumnIndexOrThrow("day_id"))
+                if(result.id == -1) {
+                    result = Day(
+                        newId,
+                        getString(c.getColumnIndexOrThrow("date")),
+                        getString(c.getColumnIndexOrThrow("comment")),
+                        mutableListOf<DaySignalValue>()
+                    )
+                }
+
+                val daySignalScore = DaySignalValue(
+                    getInt(getColumnIndexOrThrow("signal_id")),
+                    getInt(getColumnIndexOrThrow("score")),
+                    getString(getColumnIndexOrThrow("signal_description")),
+                    getString(getColumnIndexOrThrow("signal_value_description"))
+                )
+
+                result.scores.add(daySignalScore)
+            }
+            close()
+        }
+
+        return result
+    }
+
     fun getInsertId(): Int {
         val db = helper.readableDatabase
         val query = "SELECT last_insert_rowid() AS id"

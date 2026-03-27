@@ -45,7 +45,7 @@ class FragmentHome : Fragment() {
         }
 
         binding.btnLog.setOnClickListener {
-            findNavController().navigate(R.id.action_HomeFragment_to_fragmentLog)
+            findNavController().navigate(R.id.action_HomeFragment_to_fragmentDaysLog)
         }
     }
 
