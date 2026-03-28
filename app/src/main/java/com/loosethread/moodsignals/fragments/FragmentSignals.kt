@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.adapters.SignalAdapter
 import com.loosethread.moodsignals.database.Db
@@ -32,7 +34,9 @@ class FragmentSignals : Fragment() {
         _binding = FragmentSignalsBinding.inflate(inflater, container, false)
         signalAdapter = SignalAdapter(Db.getSignals())
         binding.rvSignals.adapter = signalAdapter
-        binding.rvSignals.layoutManager = LinearLayoutManager(binding.root.context)
+        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(binding.root.context)
+        val dividerItemDecoration = DividerItemDecoration(binding.root.context, LinearLayoutManager.VERTICAL)
+        binding.rvSignals.addItemDecoration(dividerItemDecoration)
         return binding.root
 
     }

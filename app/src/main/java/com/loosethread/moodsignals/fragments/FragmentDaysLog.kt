@@ -23,6 +23,8 @@ class FragmentDaysLog : Fragment() {
         _binding = FragmentDaysLogBinding.inflate(inflater, container, false)
 
         viewPager = binding.vpDays
+        viewPager.setOffscreenPageLimit(5)
+        viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
 
         val adapter = DaysLogPagerAdapter(this.requireActivity(), Db.getDays())
         viewPager.adapter = adapter

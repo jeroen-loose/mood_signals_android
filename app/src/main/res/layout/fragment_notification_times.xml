@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+    app:layout_constraintEnd_toEndOf="parent"
+    style="@style/fragment"
+    >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNotificationTimes"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.FullWidthLinearLayoutManager
@@ -35,6 +36,8 @@ class FragmentNotificationTimes : Fragment() {
         notificationTimeAdapter = NotificationTimeAdapter(Db.getNotificationTimes())
         binding.rvNotificationTimes.adapter = notificationTimeAdapter
         layoutManager = FullWidthLinearLayoutManager(requireContext())
+        val dividerItemDecoration = DividerItemDecoration(binding.root.context, LinearLayoutManager.VERTICAL)
+        binding.rvNotificationTimes.addItemDecoration(dividerItemDecoration)
 
         binding.rvNotificationTimes.layoutManager = layoutManager
         return binding.root
