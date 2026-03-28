@@ -38,6 +38,16 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    sourceSets {
+        getByName("main") {
+            java {
+                srcDirs("src/main/java", "src/main/java/database",
+                    "src/main/java/com.loosethread.moodsignals/datatypes", "src/main/java/datatypes",
+                    "src/main/java/helpers"
+                )
+            }
+        }
+    }
 }
 
 dependencies {

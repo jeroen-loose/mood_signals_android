@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

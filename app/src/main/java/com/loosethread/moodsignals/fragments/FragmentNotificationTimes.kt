@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.loosethread.moodsignals.Db
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.FullWidthLinearLayoutManager
-import com.loosethread.moodsignals.NotificationTimeAdapter
+import com.loosethread.moodsignals.adapters.NotificationTimeAdapter
 import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.databinding.FragmentNotificationTimesBinding
 

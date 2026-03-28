@@ -1,6 +1,7 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.fragments
 
-import DatePickerFragment
+import com.loosethread.moodsignals.fragments.DatePickerFragment
+import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,12 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.loosethread.moodsignals.FullWidthLinearLayoutManager
+import com.loosethread.moodsignals.adapters.TodayAdapter
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentTodayBinding
-import java.util.Locale
+import com.loosethread.moodsignals.datatypes.NotificationTime
+import com.loosethread.moodsignals.helpers.DateManager
 
 class FragmentToday : Fragment() {
     private var _binding: FragmentTodayBinding? = null
@@ -38,26 +43,31 @@ class FragmentToday : Fragment() {
         val spinner: Spinner = binding.spNotificationTime
         ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.simple_spinner_item,
             notificationTimes
         ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
         }
 
         val notificationTime = spinner.selectedItem as NotificationTime
 
-        todayAdapter = TodayAdapter(Db.getSignals(notificationTime.id), DateManager.formatForSql()) {
-            binding.clComment.setVisibility(View.VISIBLE)
-            binding.btnDone.setOnClickListener {
-                val comment = binding.etComment.text.toString()
-                Db.updateComment(todayAdapter.dayId, comment)
+        todayAdapter =
+            TodayAdapter(Db.getSignals(notificationTime.id), DateManager.formatForSql()) {
+                binding.clComment.setVisibility(View.VISIBLE)
+                binding.btnDone.setOnClickListener {
+                    val comment = binding.etComment.text.toString()
+                    Db.updateComment(todayAdapter.dayId, comment)
 
-                findNavController().popBackStack()
+                    findNavController().popBackStack()
+                }
             }
-        }
         binding.rvSignals.adapter = todayAdapter
-        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(
+            binding.root.context,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {

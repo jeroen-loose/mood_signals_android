@@ -1,13 +1,13 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.fragments
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
+import com.loosethread.moodsignals.adapters.DaysLogPagerAdapter
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentDaysLogBinding
 
 class FragmentDaysLog : Fragment() {

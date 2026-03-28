@@ -1,12 +1,13 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.adapters
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.loosethread.moodsignals.databinding.ItemDaySignalsLogBinding
+import com.loosethread.moodsignals.datatypes.DaySignalValue
+import com.loosethread.moodsignals.helpers.ColorPicker
 
 class LogSignalAdapter(
     private val signal_scores: MutableList<DaySignalValue>
@@ -15,7 +16,8 @@ class LogSignalAdapter(
     inner class LogSignalViewHolder(private val logSignalsBinding: ItemDaySignalsLogBinding) : RecyclerView.ViewHolder(logSignalsBinding.root) {
         fun bind(signal: DaySignalValue, position: Int) {
 
-            logSignalsBinding.clDaySignalLog.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(logSignalsBinding.root.context, ColorPicker.get(signal.score)))
+            logSignalsBinding.clDaySignalLog.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(logSignalsBinding.root.context, ColorPicker.get(signal.score)))
 
             logSignalsBinding.tvSignalName.text = signal.signalDescription
             logSignalsBinding.tvSignalScore.text = signal.scoreDescription

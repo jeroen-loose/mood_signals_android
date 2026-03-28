@@ -1,7 +1,6 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.helpers
 
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
+import com.loosethread.moodsignals.R
 
 object ColorPicker {
     fun red() = R.color.red

@@ -1,4 +1,7 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.datatypes
+
+import com.loosethread.moodsignals.datatypes.SignalScore
+import com.loosethread.moodsignals.database.Db
 
 class Signal (
     var id: Int?,
@@ -17,4 +20,3 @@ class Signal (
         archived = tmp.archived
     }
 }
-

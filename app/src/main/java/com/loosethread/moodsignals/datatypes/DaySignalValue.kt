@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.datatypes
 
 class DaySignalValue (
     var signalId: Int,
@@ -6,5 +6,3 @@ class DaySignalValue (
     var signalDescription: String? = null,
     var scoreDescription: String? = null
 )
-
-

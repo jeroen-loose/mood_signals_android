@@ -1,4 +1,6 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.datatypes
+
+import com.loosethread.moodsignals.database.Db
 
 class NotificationTime (
     var id: Int?,
@@ -17,4 +19,3 @@ class NotificationTime (
         return title.toString()
     }
 }
-

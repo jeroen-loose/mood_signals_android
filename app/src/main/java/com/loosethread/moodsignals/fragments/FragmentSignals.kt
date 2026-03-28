@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.loosethread.moodsignals.R
+import com.loosethread.moodsignals.adapters.SignalAdapter
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentSignalsBinding
 
 /**

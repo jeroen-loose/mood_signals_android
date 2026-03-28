@@ -1,5 +1,6 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.fragments
 
+import android.R
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,8 +9,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.navigation.fragment.findNavController
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
-import com.loosethread.moodsignals.databinding.FragmentSignalsBinding
+import com.loosethread.moodsignals.datatypes.NotificationTime
+import com.loosethread.moodsignals.datatypes.Signal
+import com.loosethread.moodsignals.datatypes.SignalScore
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -32,10 +36,10 @@ class FragmentAddSignal : Fragment() {
         val spinner: Spinner = binding.spNotificationTime
         ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            R.layout.simple_spinner_item,
             notificationTimes
         ).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
                 spinner.adapter = adapter
         }
 

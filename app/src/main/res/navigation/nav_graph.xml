@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/HomeFragment"
-        android:name="com.loosethread.moodsignals.FragmentHome"
+        android:name="com.loosethread.moodsignals.fragments.FragmentHome"
         android:label="@string/home_fragment_label"
         tools:layout="@layout/fragment_home">
 
@@ -26,7 +26,7 @@
     </fragment>
     <fragment
         android:id="@+id/SignalsFragment"
-        android:name="com.loosethread.moodsignals.FragmentSignals"
+        android:name="com.loosethread.moodsignals.fragments.FragmentSignals"
         android:label="@string/signals_fragment_label"
         tools:layout="@layout/fragment_signals">
 
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/AddSignalFragment"
-        android:name="com.loosethread.moodsignals.FragmentAddSignal"
+        android:name="com.loosethread.moodsignals.fragments.FragmentAddSignal"
         android:label="Add Signal" />
     <fragment
         android:id="@+id/fragmentNotificationTimes"
@@ -48,15 +48,15 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentAddNotificationTime"
-        android:name="com.loosethread.moodsignals.FragmentAddNotificationTime"
+        android:name="com.loosethread.moodsignals.fragments.FragmentAddNotificationTime"
         android:label="FragmentAddNotificationTime" />
     <fragment
         android:id="@+id/fragmentToday"
-        android:name="com.loosethread.moodsignals.FragmentToday"
+        android:name="com.loosethread.moodsignals.fragments.FragmentToday"
         android:label="FragmentToday" />
     <fragment
         android:id="@+id/fragmentDaysLog"
-        android:name="com.loosethread.moodsignals.FragmentDaysLog"
+        android:name="com.loosethread.moodsignals.fragments.FragmentDaysLog"
         android:label="fragment_days_log"
         tools:layout="@layout/fragment_days_log" />
 </navigation>

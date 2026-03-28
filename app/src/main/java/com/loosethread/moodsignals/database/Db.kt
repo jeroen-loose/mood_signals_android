@@ -1,8 +1,15 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.database
 
 import android.content.ContentValues
 import android.content.Context
 import android.provider.BaseColumns
+import com.loosethread.moodsignals.datatypes.Day
+import com.loosethread.moodsignals.datatypes.DaySignalValue
+import com.loosethread.moodsignals.database.DbContract
+import com.loosethread.moodsignals.database.DbHelper
+import com.loosethread.moodsignals.datatypes.NotificationTime
+import com.loosethread.moodsignals.datatypes.Signal
+import com.loosethread.moodsignals.datatypes.SignalScore
 
 object Db {
     private lateinit var appContext: Context
@@ -91,7 +98,7 @@ object Db {
                         mutableListOf<SignalScore>(),
                         getInt(getColumnIndexOrThrow("active_choice")) == 1,
                         getInt(getColumnIndexOrThrow("notification_time_id"))
-                        )
+                    )
                     signals.add(signal)
                     resultIndex = signals.lastIndex
                     id = newId
@@ -281,17 +288,31 @@ object Db {
 
     fun getDaySignalValues(dayId: Int) : MutableList<DaySignalValue> {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+        val query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
+                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as score_description " +
+                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "JOIN ${DbContract.Signal.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
+                "JOIN ${DbContract.SignalValue.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
+                "AND ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
                 "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ?"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
         var result = mutableListOf<DaySignalValue>()
         with(c) {
             while(moveToNext()) {
-               result.add(DaySignalValue(
-                   //getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
-                    getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
-                    getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE))))
+               result.add(
+                   DaySignalValue(
+                       //getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
+                       getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
+                       getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE)),
+                       getString(getColumnIndexOrThrow("signal_description")),
+                       getString(getColumnIndexOrThrow("score_description"))
+                   )
+               )
             }
         }
 
@@ -312,7 +333,7 @@ object Db {
     fun getDayId(date: String) : Int {
         val db = helper.readableDatabase
         val query = "SELECT * FROM ${DbContract.Day.TABLE_NAME} " +
-                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = ? "
+                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = ? " +
                 "ORDER BY ${BaseColumns._ID} DESC " +
                 "LIMIT 1"
         val params = arrayOf(date)
@@ -415,52 +436,24 @@ object Db {
         val db = helper.readableDatabase
         val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
                 "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description," +
                 "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
                 "FROM ${DbContract.Day.TABLE_NAME} " +
-                "INNER JOIN ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
-                "INNER JOIN ${DbContract.Signal.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
-                "INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} AND " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
                 "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
                 "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
-                "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} ASC"
+                "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC"
         val c = db.rawQuery(query, null)
         var result = mutableListOf<Day>()
-        var lastDayId = -1
-        var day : Day
-        var resultIndex: Int = result.lastIndex
 
         with(c) {
             while(moveToNext()) {
                 val newId = getInt(c.getColumnIndexOrThrow("day_id"))
-                if(newId != lastDayId) {
-                    day = Day(
+                result.add(
+                    Day(
                         newId,
                         getString(c.getColumnIndexOrThrow("date")),
-                        getString(c.getColumnIndexOrThrow("comment")),
-                        mutableListOf<DaySignalValue>()
+                        getString(c.getColumnIndexOrThrow("comment"))
                     )
-                    result.add(day)
-                    resultIndex = result.lastIndex
-                    lastDayId = newId
-                }
-
-                val daySignalScore = DaySignalValue(
-                    getInt(getColumnIndexOrThrow("signal_id")),
-                    getInt(getColumnIndexOrThrow("score")),
-                    getString(getColumnIndexOrThrow("signal_description")),
-                    getString(getColumnIndexOrThrow("signal_value_description"))
                 )
-
-                result[resultIndex].scores.add(daySignalScore)
             }
             close()
         }
@@ -470,50 +463,26 @@ object Db {
 
     fun getDay(id: Int) : Day {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
-                "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description," +
-                "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
-                "FROM ${DbContract.Day.TABLE_NAME} " +
-                "INNER JOIN ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
-                "INNER JOIN ${DbContract.Signal.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
-                "INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} AND " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
-                "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
-                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
-                "WHERE ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ?"
-                "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} ASC"
+        val query =
+            "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
+                    "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
+                    "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
+                    "FROM ${DbContract.Day.TABLE_NAME} " +
+                    "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
+                    "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
+                    "WHERE ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ?"
+        "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
-        var result = Day(-1, "", "", mutableListOf<DaySignalValue>())
+        var result = Day(-1, "", "")
 
         with(c) {
             while(moveToNext()) {
-                val newId = getInt(c.getColumnIndexOrThrow("day_id"))
-                if(result.id == -1) {
-                    result = Day(
-                        newId,
-                        getString(c.getColumnIndexOrThrow("date")),
-                        getString(c.getColumnIndexOrThrow("comment")),
-                        mutableListOf<DaySignalValue>()
-                    )
-                }
-
-                val daySignalScore = DaySignalValue(
-                    getInt(getColumnIndexOrThrow("signal_id")),
-                    getInt(getColumnIndexOrThrow("score")),
-                    getString(getColumnIndexOrThrow("signal_description")),
-                    getString(getColumnIndexOrThrow("signal_value_description"))
+                result = Day(
+                    id,
+                    getString(c.getColumnIndexOrThrow("date")),
+                    getString(c.getColumnIndexOrThrow("comment"))
                 )
-
-                result.scores.add(daySignalScore)
             }
             close()
         }

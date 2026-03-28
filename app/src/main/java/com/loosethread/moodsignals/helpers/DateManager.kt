@@ -1,5 +1,6 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.helpers
 
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -8,7 +9,7 @@ import java.util.Locale
 object DateManager {
     private lateinit var sqlFormat : SimpleDateFormat
     private var selectedDate = Date()
-    private val humanReadableFormat = java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL, Locale.getDefault())
+    private val humanReadableFormat = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault())
     private var calendar = Calendar.getInstance()
 
     fun init(pattern: String) {

@@ -1,9 +1,11 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ItemNotificationTimeBinding
+import com.loosethread.moodsignals.datatypes.NotificationTime
 
 class NotificationTimeAdapter(
     private val notificationTimes: MutableList<NotificationTime>

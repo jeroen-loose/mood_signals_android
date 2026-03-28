@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.datatypes
 
 data class SignalScore (
     val score: Int,

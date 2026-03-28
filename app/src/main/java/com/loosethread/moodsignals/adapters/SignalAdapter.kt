@@ -1,11 +1,14 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.loosethread.moodsignals.MainActivity
+import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.databinding.ItemSignalBinding
+import com.loosethread.moodsignals.datatypes.Signal
 
 class SignalAdapter(
     private val signals: MutableList<Signal>
@@ -22,7 +25,7 @@ class SignalAdapter(
 
         private fun editSignal(id: Int) {
             val bundle = bundleOf("id" to id)
-            findNavController(
+            Navigation.findNavController(
                 activity = signalBinding.root.context as MainActivity,
                 viewId = R.id.rvSignals
             ).navigate(R.id.action_SignalsFragment_to_fragmentAddSignal, bundle)

@@ -1,13 +1,14 @@
-package com.loosethread.moodsignals
+package com.loosethread.moodsignals.adapters
 
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.loosethread.moodsignals.databinding.FragmentTodayBinding
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ItemTodayBinding
+import com.loosethread.moodsignals.datatypes.DaySignalValue
+import com.loosethread.moodsignals.datatypes.Signal
 
 class TodayAdapter(
     private var signals: MutableList<Signal>,
