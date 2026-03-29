@@ -33,20 +33,11 @@ class FragmentHome : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonSignals.setOnClickListener {
-            findNavController().navigate(R.id.action_HomeFragment_to_SignalsFragment)
-        }
+        val logFragment = FragmentDaysLog()
 
-        binding.buttonToday.setOnClickListener {
-            findNavController().navigate(R.id.action_HomeFragment_to_fragmentToday)
-        }
-
-        binding.btnNotificationTimes.setOnClickListener {
-            findNavController().navigate(R.id.action_HomeFragment_to_fragmentNotificationTimes)
-        }
-
-        binding.btnLog.setOnClickListener {
-            findNavController().navigate(R.id.action_HomeFragment_to_fragmentDaysLog)
+        childFragmentManager.beginTransaction().apply {
+            add(R.id.fcvLog, logFragment)
+            commit()
         }
     }
 

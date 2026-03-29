@@ -22,22 +22,31 @@ class FragmentDaysLog : Fragment() {
     ): View {
         _binding = FragmentDaysLogBinding.inflate(inflater, container, false)
 
-        viewPager = binding.vpDays
-        viewPager.setOffscreenPageLimit(5)
-        viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
-
-        val adapter = DaysLogPagerAdapter(this.requireActivity(), Db.getDays())
-        viewPager.adapter = adapter
-
         return binding.root
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewPager = binding.vpDays
+        val adapter = DaysLogPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, Db.getDays())
+        viewPager.adapter = adapter
+
+        val child = viewPager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView
+        child?.let {
+            it.clipToPadding = false
+            it.clipChildren = false
+        }
+        viewPager.setOffscreenPageLimit(3)
+        viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

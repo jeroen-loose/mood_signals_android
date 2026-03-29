@@ -6,6 +6,7 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     android:padding="16dp"
+    android:background="?android:attr/windowBackground"
     >
 
     <TextView

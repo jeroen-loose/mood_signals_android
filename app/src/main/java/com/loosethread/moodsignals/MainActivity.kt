@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.navigation.ui.onNavDestinationSelected
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ActivityMainBinding
 import com.loosethread.moodsignals.helpers.DateManager
@@ -72,10 +73,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+        val nc = findNavController(R.id.nav_host_fragment_content_main)
+
+        return item.onNavDestinationSelected(nc) || super.onOptionsItemSelected(item)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -3,8 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.loosethread.moodsignals.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:id="@+id/fragmentSettings"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/fragmentSignals"
+        android:title="Signals"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/fragmentCategories"
+        android:title="Categories"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/fragmentNotificationTimes"
+        android:title="Notification Times"
+        app:showAsAction="never"
+        />
+    <item
+        android:id="@+id/fragmentToday"
+        android:title="Today"
+        app:showAsAction="never"
+        />
+
 </menu>

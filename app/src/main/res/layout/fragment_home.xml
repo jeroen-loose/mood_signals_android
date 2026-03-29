@@ -6,55 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FragmentHome"
     style="@style/fragment"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:fillViewport="true"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
-            android:id="@+id/button_signals"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fcvChart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Signals"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/button_graphs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Graphs"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_signals" />
+            app:layout_constraintBottom_toTopOf="@id/fcvLog"
+            />
 
-        <Button
-            android:id="@+id/button_today"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fcvLog"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Today"
+            android:layout_height="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/fcvChart"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_graphs" />
-
-        <Button
-            android:id="@+id/btnNotificationTimes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Notification Times"
-            app:layout_constraintBottom_toTopOf="@id/btnLog"
-            app:layout_constraintTop_toBottomOf="@+id/button_today" />
-
-        <Button
-            android:id="@+id/btnLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Log"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnNotificationTimes" />
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
