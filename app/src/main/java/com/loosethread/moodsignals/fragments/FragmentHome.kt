@@ -33,11 +33,16 @@ class FragmentHome : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val logFragment = FragmentDaysLog()
+        if (savedInstanceState == null) {
+            val chartFragment = FragmentChart()
+            val logFragment = FragmentDaysLog()
 
-        childFragmentManager.beginTransaction().apply {
-            add(R.id.fcvLog, logFragment)
-            commit()
+            childFragmentManager.beginTransaction().apply {
+                replace(R.id.fcvChart, chartFragment)
+                replace(R.id.fcvLog, logFragment)
+                setReorderingAllowed(true)
+                commit()
+            }
         }
     }
 
