@@ -46,7 +46,7 @@ class FragmentChart : Fragment() {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
 
         //val gradient = getDrawable(requireContext(), R.drawable.gradient)
-        val gradient = Chart(intArrayOf(1, 1, 10))
+        val gradient = Chart(intArrayOf(10, 2, 3))
 
         binding.imgChart.background = gradient
 

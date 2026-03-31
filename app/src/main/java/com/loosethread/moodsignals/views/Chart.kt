@@ -4,12 +4,10 @@ import android.graphics.drawable.GradientDrawable
 
 class Chart : GradientDrawable
 {
-    val colorArray = intArrayOf(
-        0xff00ff00.toInt(),
-        0xffffff00.toInt(),
-        0xffffff00.toInt(),
-        0xffff0000.toInt()
-    )
+    val colorArray = mutableListOf<Int>()
+    val percentages = mutableListOf<Float>()
+
+    val gradientSize = .2f
 
     constructor(values: IntArray)  {
         setOrientation(Orientation.LEFT_RIGHT)
@@ -17,15 +15,30 @@ class Chart : GradientDrawable
     }
 
     fun setPercentages(values : IntArray) {
-        val percentages = floatArrayOf(
-            0.toFloat(),
-            values[0].toFloat() / values.sum().toFloat(),
-            (values[0] + values[1]).toFloat() / values.sum().toFloat(),
-            1.toFloat(),
-        )
+        if (values[0] > 0) {
+            colorArray.add(0xff00ff00.toInt())
+            colorArray.add(0xff00ff00.toInt())
+            percentages.add(0f)
+            percentages.add((values[0].toFloat() - gradientSize) / values.sum().toFloat())
+        }
+
+        if (values[1] > 0) {
+            colorArray.add(0xffffff00.toInt())
+            colorArray.add(0xffffff00.toInt())
+            percentages.add((values[0].toFloat() + gradientSize) / values.sum().toFloat())
+            percentages.add((values[0].toFloat() + values[1].toFloat() - gradientSize) / values.sum().toFloat())
+        }
+
+        if (values[2] > 0) {
+            colorArray.add(0xffff0000.toInt())
+            colorArray.add(0xffff0000.toInt())
+            percentages.add((values[0].toFloat() + values[1].toFloat() + gradientSize) / values.sum().toFloat())
+            percentages.add(1f)
+        }
+
         setColors(
-            colorArray,
-            percentages
+            colorArray.toIntArray(),
+            percentages.toFloatArray()
         )
     }
 }

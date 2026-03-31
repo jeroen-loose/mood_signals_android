@@ -7,7 +7,8 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     android:layout_marginVertical="8dp"
-    style="@style/listitem"
+    android:layoutDirection="ltr"
+    style="@style/signal"
     >
 
 
@@ -19,18 +20,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvSignalScore"
-        style="@style/listitemtext"
         />
 
     <TextView
         android:id="@+id/tvSignalScore"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@id/tvSignalName"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/listitemtext"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

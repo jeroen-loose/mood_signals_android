@@ -13,6 +13,12 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "${DbContract.Signal.COLUMN_NAME_ARCHIVED} BOOLEAN NOT NULL DEFAULT FALSE," +
                 "${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} BOOLEAN NOT NULL DEFAULT FALSE," +
                 "${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} INTEGER" +
+                "${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} INTEGER" +
+                ")",
+
+        "CREATE TABLE ${DbContract.SignalCategory.TABLE_NAME} (" +
+                "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL" +
                 ")",
 
         "CREATE TABLE ${DbContract.SignalValue.TABLE_NAME} (" +
@@ -57,7 +63,37 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
                 ") VALUES " +
                 "('Morning', 'How did you sleep?', '07:30'), " +
-                "('Evening', 'How was your day?', '21:00')"
+                "('Evening', 'How was your day?', '21:00')",
+
+        "INSERT INTO ${DbContract.SignalCategory.TABLE_NAME} (" +
+                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION}" +
+                ") VALUES " +
+                "('Social'), " +
+                "('Tasks'), " +
+                "('Sleep')," +
+                "('Self-Care')," +
+                "('Work')," +
+                "('Stress')"
+
+    )
+
+    private val SQL_ENABLE_CATEGORIES_ENTRIES = arrayOf(
+        "CREATE TABLE IF NOT EXISTS ${DbContract.SignalCategory.TABLE_NAME} (" +
+                "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL" +
+                ")",
+
+        "ALTER TABLE ${DbContract.Signal.TABLE_NAME} ADD ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} INTEGER",
+
+        "INSERT INTO ${DbContract.SignalCategory.TABLE_NAME} (" +
+                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION}" +
+                ") VALUES " +
+                "('Social'), " +
+                "('Tasks'), " +
+                "('Sleep')," +
+                "('Self-Care')," +
+                "('Work')," +
+                "('Stress')"
     )
 
     private val SQL_DELETE_ENTRIES = arrayOf(
@@ -91,5 +127,11 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     fun reset() {
         onUpgrade(writableDatabase, 1, 1)
+    }
+
+    fun addCategories() {
+        for(sql in SQL_ENABLE_CATEGORIES_ENTRIES) {
+            writableDatabase.execSQL(sql)
+        }
     }
 }

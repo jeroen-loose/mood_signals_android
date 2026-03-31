@@ -9,6 +9,12 @@ object DbContract {
         const val COLUMN_NAME_ARCHIVED = "archived"
         const val COLUMN_NAME_ACTIVE_CHOICE = "active_choice"
         const val COLUMN_NAME_NOTIFICATION_TIME_ID = "notification_time_id"
+        const val COLUMN_NAME_CATEGORY_ID = "category_id"
+    }
+
+    object SignalCategory : BaseColumns {
+        const val TABLE_NAME = "signal_categories"
+        const val COLUMN_NAME_DESCRIPTION = "description"
     }
 
     object SignalValue : BaseColumns {

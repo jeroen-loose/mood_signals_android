@@ -1,6 +1,5 @@
 package com.loosethread.moodsignals.fragments
 
-import com.loosethread.moodsignals.fragments.DatePickerFragment
 import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,7 +29,7 @@ class FragmentToday : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val signals = Db.getSignals()
+        val signals = Db.getSignalsByNotificationTime()
         if (signals.size == 0) {
             findNavController().popBackStack()
         }
@@ -53,7 +52,7 @@ class FragmentToday : Fragment() {
         val notificationTime = spinner.selectedItem as NotificationTime
 
         todayAdapter =
-            TodayAdapter(Db.getSignals(notificationTime.id), DateManager.formatForSql()) {
+            TodayAdapter(Db.getSignalsByNotificationTime(notificationTime.id), DateManager.formatForSql()) {
                 binding.clComment.setVisibility(View.VISIBLE)
                 binding.btnDone.setOnClickListener {
                     val comment = binding.etComment.text.toString()
@@ -72,7 +71,7 @@ class FragmentToday : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
                 val selectedItem = parent.getItemAtPosition(pos) as NotificationTime
-                todayAdapter.updateSignals(Db.getSignals(selectedItem.id))
+                todayAdapter.updateSignals(Db.getSignalsByNotificationTime(selectedItem.id))
                 todayAdapter.notifyDataSetChanged()
                 resetViews()
             }

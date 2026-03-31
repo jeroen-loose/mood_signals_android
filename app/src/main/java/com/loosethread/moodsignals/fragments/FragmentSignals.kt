@@ -32,7 +32,7 @@ class FragmentSignals : Fragment() {
     ): View {
 
         _binding = FragmentSignalsBinding.inflate(inflater, container, false)
-        signalAdapter = SignalAdapter(Db.getSignals())
+        signalAdapter = SignalAdapter(Db.getSignalsByNotificationTime())
         binding.rvSignals.adapter = signalAdapter
         binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(binding.root.context)
         val dividerItemDecoration = DividerItemDecoration(binding.root.context, LinearLayoutManager.VERTICAL)

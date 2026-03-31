@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FragmentAddSignal"
     style="@style/fragment"
+    android:padding="8dp"
     >
 
     <EditText
@@ -26,6 +27,7 @@
         app:layout_constraintTop_toBottomOf="@id/etSignalName"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        style="@style/signal.green"
         />
 
     <EditText
@@ -36,6 +38,7 @@
         app:layout_constraintTop_toBottomOf="@id/etSignalScore1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        style="@style/signal.orange"
         />
 
     <EditText
@@ -46,25 +49,38 @@
         app:layout_constraintTop_toBottomOf="@id/etSignalScore2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        style="@style/signal.red"
+        />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/smActiveChoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Active choice?"
+        app:layout_constraintTop_toBottomOf="@id/etSignalScore3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         />
 
     <TextView
-        android:id="@+id/txtActiveChoice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Active Choice?"
-        app:layout_constraintTop_toBottomOf="@id/etSignalScore3"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/cbActiveChoice"
-        />
-
-    <CheckBox
-        android:id="@+id/cbActiveChoice"
+        android:id="@+id/txtCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/txtActiveChoice"
-        app:layout_constraintBottom_toBottomOf="@id/txtActiveChoice"
+        android:text="Category"
+        app:layout_constraintTop_toTopOf="@id/spCategory"
+        app:layout_constraintBottom_toBottomOf="@+id/spCategory"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <Spinner
+        android:id="@+id/spCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        app:layout_constraintTop_toBottomOf="@id/smActiveChoice"
         app:layout_constraintRight_toRightOf="parent"
+
         />
 
     <TextView
@@ -72,7 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Notification Time"
-        app:layout_constraintTop_toBottomOf="@id/txtActiveChoice"
+        app:layout_constraintTop_toTopOf="@id/spNotificationTime"
+        app:layout_constraintBottom_toBottomOf="@+id/spNotificationTime"
         app:layout_constraintLeft_toLeftOf="parent"
         />
 
@@ -82,9 +99,9 @@
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown"
-        app:layout_constraintTop_toTopOf="@id/txtNotificationTime"
-        app:layout_constraintBottom_toBottomOf="@id/txtNotificationTime"
+        app:layout_constraintTop_toBottomOf="@id/spCategory"
         app:layout_constraintRight_toRightOf="parent"
+
         />
 
     <Button
@@ -92,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
        android:text="Add"
-        app:layout_constraintTop_toBottomOf="@id/txtNotificationTime"
+        app:layout_constraintTop_toBottomOf="@id/spNotificationTime"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />

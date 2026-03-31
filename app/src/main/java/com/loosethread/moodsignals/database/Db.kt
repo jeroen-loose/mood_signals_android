@@ -5,10 +5,9 @@ import android.content.Context
 import android.provider.BaseColumns
 import com.loosethread.moodsignals.datatypes.Day
 import com.loosethread.moodsignals.datatypes.DaySignalValue
-import com.loosethread.moodsignals.database.DbContract
-import com.loosethread.moodsignals.database.DbHelper
 import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
+import com.loosethread.moodsignals.datatypes.SignalCategory
 import com.loosethread.moodsignals.datatypes.SignalScore
 
 object Db {
@@ -28,6 +27,7 @@ object Db {
         val db = helper.readableDatabase
         val query = "SELECT ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} as active_choice, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} as category_id, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} as notification_time_id, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} as score FROM" +
@@ -40,12 +40,13 @@ object Db {
 
         val cursor = db.rawQuery(query, params)
 
-        var signal = Signal(id, null, mutableListOf<SignalScore>(), null, null)
+        var signal = Signal(id, null, mutableListOf<SignalScore>(), null, null, null)
 
         with(cursor) {
             while (moveToNext()) {
                 signal.description = getString(getColumnIndexOrThrow("signal_description"))
                 signal.activeChoice = getInt(getColumnIndexOrThrow("active_choice")) == 1
+                signal.categoryId = getInt(getColumnIndexOrThrow("category_id"))
                 signal.notificationTimeId = getInt(getColumnIndexOrThrow("notification_time_id"))
 
                 val signalScore = SignalScore(
@@ -60,12 +61,89 @@ object Db {
 
         return signal
     }
-
-    fun getSignals(notificationTimeId: Int? = null): MutableList<Signal> {
+    fun getSignalsByCategory(categoryId: Int?): MutableList<Signal> {
         val db = helper.readableDatabase
         var query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
+                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
+                "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
+                " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
+                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
+                "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ? " +
+                "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+
+        var params: Array<String>
+        if (categoryId != null) {
+            params = arrayOf(categoryId.toString())
+        } else {
+            params = arrayOf("NULL")
+        }
+
+        val cursor = db.rawQuery(query, params)
+        var signals = mutableListOf<Signal>()
+
+        with(cursor) {
+            var signal: Signal
+            var id: Int? = null
+            var resultIndex: Int = signals.lastIndex
+
+            while (moveToNext()) {
+                val newId = getInt(getColumnIndexOrThrow("id"))
+                if(id != newId) {
+                    signal = Signal(
+                        newId,
+                        getString(getColumnIndexOrThrow("signal_description")),
+                        mutableListOf<SignalScore>(),
+                        getInt(getColumnIndexOrThrow("active_choice")) == 1,
+                        categoryId,
+                        getInt(getColumnIndexOrThrow("notification_time_id"))
+                    )
+                    signals.add(signal)
+                    resultIndex = signals.lastIndex
+                    id = newId
+                }
+
+                val signalScore = SignalScore(
+                    getInt(getColumnIndexOrThrow("score")),
+                    getString(getColumnIndexOrThrow("signal_value_description"))
+                )
+
+                signals[resultIndex].scores.add(signalScore)
+            }
+
+            close()
+        }
+
+        return signals
+    }
+
+    fun getCategories(): MutableList<SignalCategory> {
+        val db = helper.readableDatabase
+        val result = mutableListOf<SignalCategory>()
+        val query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME}"
+        val c = db.rawQuery(query, null)
+        with (c) {
+            while (moveToNext()) {
+                result.add(
+                    SignalCategory(
+                        getInt(getColumnIndexOrThrow(BaseColumns._ID)),
+                        getString(getColumnIndexOrThrow(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION))
+                    )
+                )
+            }
+            c.close()
+        }
+        return result
+    }
+
+    fun getSignalsByNotificationTime(notificationTimeId: Int? = null): MutableList<Signal> {
+        val db = helper.readableDatabase
+        var query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} AS category_id, " +
                 "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
                 "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
@@ -97,6 +175,7 @@ object Db {
                         getString(getColumnIndexOrThrow("signal_description")),
                         mutableListOf<SignalScore>(),
                         getInt(getColumnIndexOrThrow("active_choice")) == 1,
+                        getInt(getColumnIndexOrThrow("category_id")),
                         getInt(getColumnIndexOrThrow("notification_time_id"))
                     )
                     signals.add(signal)
@@ -123,6 +202,7 @@ object Db {
         val values = ContentValues().apply {
             put(DbContract.Signal.COLUMN_NAME_DESCRIPTION, signal.description)
             put(DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE, signal.activeChoice)
+            put(DbContract.Signal.COLUMN_NAME_CATEGORY_ID, signal.categoryId)
             put(DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID, signal.notificationTimeId)
             put(DbContract.Signal.COLUMN_NAME_ARCHIVED, 0)
         }
@@ -146,11 +226,13 @@ object Db {
         val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
                 "SET ${DbContract.Signal.COLUMN_NAME_DESCRIPTION} = ?, " +
                 "${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} = ?, " +
+                "${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?, " +
                 "${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? " +
                 "WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(
             signal.description.toString(),
             if (signal.activeChoice == true) "1" else "0",
+            signal.categoryId.toString(),
             signal.notificationTimeId.toString(),
             signal.id.toString()
         )
@@ -504,5 +586,9 @@ object Db {
 
     fun reset() {
         helper.reset()
+    }
+
+    fun addCategories() {
+        helper.addCategories()
     }
 }

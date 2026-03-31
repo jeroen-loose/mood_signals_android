@@ -13,7 +13,9 @@ import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
 import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
+import com.loosethread.moodsignals.datatypes.SignalCategory
 import com.loosethread.moodsignals.datatypes.SignalScore
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -26,6 +28,7 @@ class FragmentAddSignal : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val notificationTimes = Db.getNotificationTimes()
+    private val categories = Db.getCategories()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,14 +36,24 @@ class FragmentAddSignal : Fragment() {
     ): View {
         _binding = FragmentAddSignalBinding.inflate(inflater, container, false)
 
-        val spinner: Spinner = binding.spNotificationTime
+        val category: Spinner = binding.spCategory
+        ArrayAdapter(
+            requireContext(),
+            R.layout.simple_spinner_item,
+            categories
+        ).also { categoryAdapter ->
+            categoryAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            category.adapter = categoryAdapter
+        }
+
+        val notificationTime: Spinner = binding.spNotificationTime
         ArrayAdapter(
             requireContext(),
             R.layout.simple_spinner_item,
             notificationTimes
-        ).also { adapter ->
-                adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-                spinner.adapter = adapter
+        ).also { notificationTimeAdapter ->
+                notificationTimeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+                notificationTime.adapter = notificationTimeAdapter
         }
 
         val id = getArguments()?.getInt("id")
@@ -51,7 +64,10 @@ class FragmentAddSignal : Fragment() {
             binding.etSignalScore1.setText(signal.scores[0].description)
             binding.etSignalScore2.setText(signal.scores[1].description)
             binding.etSignalScore3.setText(signal.scores[2].description)
-            binding.cbActiveChoice.isChecked = signal.activeChoice!!
+            binding.smActiveChoice.isChecked = signal.activeChoice!!
+            categories.find { it.id == signal.categoryId }?.let {
+                binding.spCategory.setSelection(categories.indexOf(it))
+            }
             notificationTimes.find { it.id == signal.notificationTimeId }?.let {
                 binding.spNotificationTime.setSelection(notificationTimes.indexOf(it))
             }
@@ -76,7 +92,8 @@ class FragmentAddSignal : Fragment() {
                 null,
                 binding.etSignalName.text.toString(),
                 scores,
-                binding.cbActiveChoice.isChecked,
+                binding.smActiveChoice.isChecked,
+                (binding.spCategory.selectedItem as SignalCategory).id!!,
                 (binding.spNotificationTime.selectedItem as NotificationTime).id!!
             )
             if(binding.btnAdd.tag != null) {

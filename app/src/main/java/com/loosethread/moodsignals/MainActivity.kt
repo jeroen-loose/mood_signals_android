@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         Db.init(applicationContext)
         DateManager.init("yyyy-MM-dd")
         //Db.reset()
+        //Db.addCategories()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
