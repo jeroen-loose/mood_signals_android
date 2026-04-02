@@ -5,6 +5,7 @@ import android.content.Context
 import android.provider.BaseColumns
 import com.loosethread.moodsignals.datatypes.Day
 import com.loosethread.moodsignals.datatypes.DaySignalValue
+import com.loosethread.moodsignals.datatypes.LogCategory
 import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
 import com.loosethread.moodsignals.datatypes.SignalCategory
@@ -134,6 +135,60 @@ object Db {
                 )
             }
             c.close()
+        }
+        return result
+    }
+
+    fun getDayCategories(dayId: Int): MutableList<LogCategory> {
+        val db = helper.readableDatabase
+
+        val query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} AS day_id, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} AS signal_score, " +
+                "COUNT(${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE}) AS score_count, " +
+                "${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID} AS category_id, " +
+                "${DbContract.SignalCategory.TABLE_NAME}.${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} AS category_description " +
+                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "LEFT JOIN ${DbContract.Signal.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
+                "LEFT JOIN ${DbContract.SignalCategory.TABLE_NAME} " +
+                "ON ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID} " +
+                "WHERE ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+                "GROUP BY " +
+                "${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID}, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+                "ORDER BY category_id ASC, signal_score ASC"
+        val params = arrayOf(dayId.toString())
+        val c = db.rawQuery(query, params)
+        var logCategory = LogCategory(-1, -1, "")
+        var result:  MutableList<LogCategory> = mutableListOf()
+        var resultIndex = -1
+
+        with (c) {
+            while (moveToNext()) {
+                var categoryId = getInt(getColumnIndexOrThrow("category_id"))
+
+                if(logCategory.categoryId != categoryId) {
+                    var description = getString(getColumnIndexOrThrow("category_description"))
+                    if(description.isNullOrEmpty()) { description = "Uncategorized" }
+
+                    logCategory = LogCategory(
+                        getInt(getColumnIndexOrThrow("day_id")),
+                        getInt(getColumnIndexOrThrow("category_id")),
+                        description,
+                        mapOf()
+                    )
+                    result.add(logCategory)
+                    resultIndex = result.lastIndex
+                }
+                val scoreCount = mapOf(
+                    getInt(getColumnIndexOrThrow("signal_score")) to getInt(getColumnIndexOrThrow("score_count"))
+                )
+
+                result[resultIndex].score_count = result[resultIndex].score_count.plus(scoreCount)
+
+            }
+
+            close()
         }
         return result
     }
@@ -380,7 +435,8 @@ object Db {
                 "JOIN ${DbContract.SignalValue.TABLE_NAME} " +
                 "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
                 "AND ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ?"
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+                "ORDER BY score DESC, signal_id ASC"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
         var result = mutableListOf<DaySignalValue>()
@@ -395,6 +451,50 @@ object Db {
                        getString(getColumnIndexOrThrow("score_description"))
                    )
                )
+            }
+        }
+
+        return result
+    }
+
+    fun getDaySignalValuesByCategory(dayId: Int, categoryId: Int?) : MutableList<DaySignalValue> {
+        val db = helper.readableDatabase
+        var query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
+                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
+                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
+                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as score_description " +
+                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "JOIN ${DbContract.Signal.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
+                "JOIN ${DbContract.SignalValue.TABLE_NAME} " +
+                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
+                "AND ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+                "AND ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} "
+
+                var params: Array<String>
+                if (categoryId == 0) {
+                    query += "IS NULL"
+                    params = arrayOf(dayId.toString())
+                } else {
+                    query += "= ?"
+                    params = arrayOf(dayId.toString(), categoryId.toString())
+                }
+                query += " ORDER BY score DESC, signal_id ASC"
+
+        val c = db.rawQuery(query, params)
+        var result = mutableListOf<DaySignalValue>()
+        with(c) {
+            while(moveToNext()) {
+                result.add(
+                    DaySignalValue(
+                        //getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
+                        getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
+                        getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE)),
+                        getString(getColumnIndexOrThrow("signal_description")),
+                        getString(getColumnIndexOrThrow("score_description"))
+                    )
+                )
             }
         }
 

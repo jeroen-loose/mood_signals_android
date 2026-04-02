@@ -1,6 +1,5 @@
 package com.loosethread.moodsignals.fragments
 
-import com.loosethread.moodsignals.fragments.EditCommentFragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +10,21 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.loosethread.moodsignals.FullWidthLinearLayoutManager
-import com.loosethread.moodsignals.adapters.LogSignalAdapter
+import com.loosethread.moodsignals.R
+import com.loosethread.moodsignals.adapters.LogCategoriesAdapter
 import com.loosethread.moodsignals.database.Db
+import com.loosethread.moodsignals.database.DbContract
 import com.loosethread.moodsignals.databinding.ItemDayLogBinding
 import com.loosethread.moodsignals.datatypes.Day
 import com.loosethread.moodsignals.datatypes.DaySignalValue
+import com.loosethread.moodsignals.datatypes.LogCategory
+import com.loosethread.moodsignals.datatypes.SignalCategory
 import com.loosethread.moodsignals.helpers.DateManager
 
 class FragmentSingleDay(): Fragment() {
     private val dayId: Int by lazy { requireArguments().getInt("dayId") }
     private lateinit var day: Day
-    private lateinit var scores: MutableList<DaySignalValue>
+    private lateinit var categories: MutableList<LogCategory>
     private var _binding: ItemDayLogBinding? = null
     private val binding get() = _binding!!
 
@@ -35,17 +38,18 @@ class FragmentSingleDay(): Fragment() {
         savedInstanceState: Bundle?
     ): View {
         day = Db.getDay(dayId)
-        scores = Db.getDaySignalValues(dayId)
+        categories = Db.getDayCategories(dayId)
 
         _binding = ItemDayLogBinding.inflate(inflater, container, false)
 
-        val logSignalAdapter = LogSignalAdapter(scores)
-        binding.rvDaySignalsLog.adapter = logSignalAdapter
-        binding.rvDaySignalsLog.layoutManager =
+        val logCategoriesAdapter = LogCategoriesAdapter(dayId, categories)
+        binding.rvCategories.adapter = logCategoriesAdapter
+        binding.rvCategories.layoutManager =
             FullWidthLinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
 
         val dividerItemDecoration = DividerItemDecoration(binding.root.context, LinearLayoutManager.VERTICAL)
-        binding.rvDaySignalsLog.addItemDecoration(dividerItemDecoration)
+        dividerItemDecoration.setDrawable(binding.root.context.getDrawable(R.drawable.blankline)!!)
+        binding.rvCategories.addItemDecoration(dividerItemDecoration)
 
         return binding.root
     }
@@ -80,7 +84,7 @@ class FragmentSingleDay(): Fragment() {
     override fun onResume() {
         super.onResume()
         day = Db.getDay(dayId)
-        scores = Db.getDaySignalValues(dayId)
+        categories = Db.getDayCategories(dayId)
     }
 
 
