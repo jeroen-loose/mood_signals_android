@@ -13,12 +13,10 @@ import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.adapters.LogCategoriesAdapter
 import com.loosethread.moodsignals.database.Db
-import com.loosethread.moodsignals.database.DbContract
 import com.loosethread.moodsignals.databinding.ItemDayLogBinding
 import com.loosethread.moodsignals.datatypes.Day
-import com.loosethread.moodsignals.datatypes.DaySignalValue
 import com.loosethread.moodsignals.datatypes.LogCategory
-import com.loosethread.moodsignals.datatypes.SignalCategory
+import com.loosethread.moodsignals.dialogs.EditCommentDialog
 import com.loosethread.moodsignals.helpers.DateManager
 
 class FragmentSingleDay(): Fragment() {
@@ -61,7 +59,7 @@ class FragmentSingleDay(): Fragment() {
         val requestKey = "edit_comment_request_$dayId"
 
         binding.llComment.setOnClickListener {
-            val dialog = EditCommentFragment()
+            val dialog = EditCommentDialog()
             dialog.arguments = bundleOf(
                 "comment" to day.comment,
                 "requestKey" to requestKey

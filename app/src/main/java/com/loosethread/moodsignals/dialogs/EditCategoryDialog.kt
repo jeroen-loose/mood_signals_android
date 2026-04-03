@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals.fragments
+package com.loosethread.moodsignals.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -9,26 +9,26 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.loosethread.moodsignals.R
 
-class EditCommentFragment : DialogFragment() {
+class EditCategoryDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater;
 
-            val comment = arguments?.getString("comment")
+            val description = arguments?.getString("description")
 
-            val dialogView = inflater.inflate(R.layout.dialog_edit_comment, null)
+            val dialogView = inflater.inflate(R.layout.fragment_add_category, null)
 
-            val etComment = dialogView.findViewById<EditText>(R.id.etComment)
-            etComment.setText(comment)
+            val etDescription = dialogView.findViewById<EditText>(R.id.etDescription)
+            etDescription.setText(description)
 
             builder.setView(dialogView)
                 .setPositiveButton("OK",
                     DialogInterface.OnClickListener { dialog, id ->
-                        val requestKey = arguments?.getString("requestKey") ?: "edit_comment_request"
+                        val requestKey = arguments?.getString("requestKey") ?: "edit_category_request"
                         val resultBundle = Bundle().apply {
                             putBoolean("isUpdated", true)
-                            putString("comment", etComment.text.toString())
+                            putString("description", etDescription.text.toString())
                         }
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
@@ -37,9 +37,7 @@ class EditCommentFragment : DialogFragment() {
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })
-
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
-
     }
 }

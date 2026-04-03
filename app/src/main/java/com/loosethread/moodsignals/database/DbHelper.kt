@@ -68,6 +68,9 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         "INSERT INTO ${DbContract.SignalCategory.TABLE_NAME} (" +
                 "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION}" +
                 ") VALUES " +
+                "('Uncategorized'), " +
+                "('Energy'), " +
+                "('Mood'), " +
                 "('Social'), " +
                 "('Tasks'), " +
                 "('Sleep')," +

@@ -16,6 +16,7 @@ import com.loosethread.moodsignals.adapters.TodayAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentTodayBinding
 import com.loosethread.moodsignals.datatypes.NotificationTime
+import com.loosethread.moodsignals.dialogs.DatePickerDialog
 import com.loosethread.moodsignals.helpers.DateManager
 
 class FragmentToday : Fragment() {
@@ -89,7 +90,7 @@ class FragmentToday : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.llDate.setOnClickListener {
-            val dialog = DatePickerFragment()
+            val dialog = DatePickerDialog()
             dialog.show(parentFragmentManager, "datePicker")
             parentFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { requestKey, bundle ->
                 binding.tvDate.text = DateManager.formatForDisplay()

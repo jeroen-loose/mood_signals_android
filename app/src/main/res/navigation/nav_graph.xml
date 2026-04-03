@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_HomeFragment_to_fragmentDaysLog"
             app:destination="@id/fragmentDaysLog" />
+        <action
+            android:id="@+id/action_HomeFragment_to_fragmentCategoriest"
+            app:destination="@id/fragmentCategories" />
     </fragment>
     <fragment
         android:id="@+id/fragmentSignals"
@@ -40,7 +43,7 @@
         android:label="Add Signal" />
     <fragment
         android:id="@+id/fragmentNotificationTimes"
-        android:name="com.loosethread.moodnotificationTimes.FragmentNotificationTimes"
+        android:name="com.loosethread.moodsignals.FragmentNotificationTimes"
         android:label="FragmentNotificationTimes" >
         <action
             android:id="@+id/action_fragmentNotificationTimes_to_fragmentAddNotificationTime"
@@ -59,4 +62,8 @@
         android:name="com.loosethread.moodsignals.fragments.FragmentDaysLog"
         android:label="fragment_days_log"
         tools:layout="@layout/fragment_days_log" />
+    <fragment
+        android:id="@+id/fragmentCategories"
+        android:name="com.loosethread.moodsignals.FragmentCategories"
+        android:label="FragmentCategories" />
 </navigation>

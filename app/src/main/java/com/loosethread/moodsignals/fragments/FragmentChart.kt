@@ -7,7 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.R
+import com.loosethread.moodsignals.adapters.DayScoresAdapter
+import com.loosethread.moodsignals.adapters.SignalAdapter
+import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentChartBinding
 import com.loosethread.moodsignals.views.Chart
 
@@ -25,7 +31,7 @@ class FragmentChart : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    lateinit var dayAdapter: DayScoresAdapter
 
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
@@ -44,13 +50,12 @@ class FragmentChart : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
+        val dayScores = Db.getDayScores()
 
-        //val gradient = getDrawable(requireContext(), R.drawable.gradient)
-        val gradient = Chart(
-            requireContext(),
-            intArrayOf(10, 2, 3))
+        dayAdapter = DayScoresAdapter(dayScores)
+        binding.rvDays.adapter = dayAdapter
+        binding.rvDays.layoutManager = FullWidthLinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
 
-        binding.imgChart.background = gradient
 
         return binding.root
     }

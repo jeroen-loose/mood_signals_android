@@ -1,4 +1,4 @@
-package com.loosethread.moodsignals.fragments
+package com.loosethread.moodsignals.dialogs
 
 import android.app.DatePickerDialog
 import android.app.Dialog
@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.loosethread.moodsignals.helpers.DateManager
 
-class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
+class DatePickerDialog : DialogFragment(), DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val result = DatePickerDialog(
             requireContext(),

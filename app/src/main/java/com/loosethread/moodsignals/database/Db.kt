@@ -6,6 +6,7 @@ import android.provider.BaseColumns
 import com.loosethread.moodsignals.datatypes.Day
 import com.loosethread.moodsignals.datatypes.DaySignalValue
 import com.loosethread.moodsignals.datatypes.LogCategory
+import com.loosethread.moodsignals.datatypes.LogDay
 import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
 import com.loosethread.moodsignals.datatypes.SignalCategory
@@ -120,10 +121,13 @@ object Db {
         return signals
     }
 
-    fun getCategories(): MutableList<SignalCategory> {
+    fun getCategories(idToExclude: Int? = null): MutableList<SignalCategory> {
         val db = helper.readableDatabase
         val result = mutableListOf<SignalCategory>()
-        val query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME}"
+        var query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME}"
+        if (idToExclude != null) {
+            query = query.plus(" WHERE ${BaseColumns._ID} != $idToExclude")
+        }
         val c = db.rawQuery(query, null)
         with (c) {
             while (moveToNext()) {
@@ -137,6 +141,92 @@ object Db {
             c.close()
         }
         return result
+    }
+
+    fun getCategory(id: Int) : SignalCategory {
+        val db = helper.readableDatabase
+        val query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+
+        val params = arrayOf(id.toString())
+
+        val cursor = db.rawQuery(query, params)
+
+        var category = SignalCategory(id, null)
+        with(cursor) {
+            while (moveToNext()) {
+                category = SignalCategory(
+                    getInt(getColumnIndexOrThrow(BaseColumns._ID)),
+                    getString(getColumnIndexOrThrow(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION))
+                )
+            }
+
+            close()
+        }
+
+        return category
+    }
+
+    fun categoryHasSignals(id: Int) : Boolean {
+        val db = helper.readableDatabase
+
+        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME} WHERE ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        val result = c.count > 0
+
+        c.close()
+        return result
+    }
+
+
+    fun addCategory(description: String) : Int {
+        val db = helper.writableDatabase
+        val values = ContentValues().apply {
+            put(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION, description)
+        }
+
+        val newCategoryId = db.insert(DbContract.SignalCategory.TABLE_NAME, null, values)
+        return newCategoryId.toInt()
+    }
+
+    fun updateCategory(id: Int, description: String) {
+        val db = helper.writableDatabase
+        val query = "UPDATE ${DbContract.SignalCategory.TABLE_NAME} " +
+                "SET ${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} = ? " +
+                "WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(description, id.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun deleteCategory(id: Int, replacement: Int) {
+        val db = helper.writableDatabase
+        if (replacement > 0) {
+            val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                    "SET category_id = ? " +
+                    "WHERE category_id = ?"
+            val params = arrayOf(replacement.toString(), id.toString())
+            val c = db.rawQuery(query, params)
+            c.moveToFirst()
+            c.close()
+        }
+        val query = "DELETE FROM ${DbContract.SignalCategory.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun updateSignalCategoryIds(from: Int, to: Int) {
+        val db = helper.writableDatabase
+        val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                "SET ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ? " +
+                "WHERE ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?"
+        val params = arrayOf(to.toString(), from.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
     }
 
     fun getDayCategories(dayId: Int): MutableList<LogCategory> {
@@ -530,6 +620,51 @@ object Db {
 
         c.close()
         return id
+    }
+
+    fun getDayScores() : MutableList<LogDay> {
+       val db = helper.readableDatabase
+       val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
+               "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
+               "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment, " +
+               "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as signal_score, " +
+               "COUNT(*) as count " +
+               "FROM ${DbContract.Day.TABLE_NAME} " +
+               "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
+               "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
+               "LEFT JOIN ${DbContract.DaySignalValue.TABLE_NAME} " +
+               "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
+               "GROUP BY ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+               "ORDER BY " +
+               "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} ASC, " +
+               "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} ASC"
+       val c = db.rawQuery(query, null)
+       var result = mutableListOf<LogDay>()
+        var day = LogDay(-1, "", mutableMapOf())
+        var lastIndex : Int? = null
+
+        with(c) {
+            while(moveToNext()) {
+
+                if (day.dayId != getInt(getColumnIndexOrThrow("day_id"))) {
+                    day = LogDay(
+                        getInt(getColumnIndexOrThrow("day_id")),
+                        getString(getColumnIndexOrThrow("date")) + " - " + getString(getColumnIndexOrThrow("comment")),
+                        mutableMapOf()
+                    )
+                    result.add(day)
+                    lastIndex = result.lastIndex
+                }
+
+                val score_count = mapOf(
+                    getInt(getColumnIndexOrThrow("signal_score")) to getInt(getColumnIndexOrThrow("count"))
+                )
+
+                result[lastIndex!!].score_count = result[lastIndex!!].score_count.plus(score_count)
+            }
+        }
+       c.close()
+       return result
     }
 
     fun createDayId(date: String) : Int {

@@ -19,9 +19,6 @@
          android:layout_width="0dp"
         android:layout_weight="1"
         android:textColor="@color/white"
-        android:maxLines="1"
-        android:scrollHorizontally="true"
-        android:marqueeRepeatLimit="marquee_forever"
         />
 
     <TextView
