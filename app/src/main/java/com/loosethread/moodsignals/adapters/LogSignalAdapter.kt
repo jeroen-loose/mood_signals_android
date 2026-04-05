@@ -20,7 +20,9 @@ class LogSignalAdapter(
                 ContextCompat.getColor(logSignalsBinding.root.context, ColorPicker.get(signal.score)))
 
             logSignalsBinding.tvSignalName.text = signal.signalDescription
+            logSignalsBinding.tvSignalName.isSelected = true
             logSignalsBinding.tvSignalScore.text = signal.scoreDescription
+            logSignalsBinding.tvSignalScore.isSelected = true
         }
     }
 

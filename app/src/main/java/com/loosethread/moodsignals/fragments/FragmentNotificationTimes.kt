@@ -33,7 +33,7 @@ class FragmentNotificationTimes : Fragment() {
     ): View {
 
         _binding = FragmentNotificationTimesBinding.inflate(inflater, container, false)
-        notificationTimeAdapter = NotificationTimeAdapter(Db.getNotificationTimes())
+        notificationTimeAdapter = NotificationTimeAdapter(Db.getNotificationTimes(), childFragmentManager, viewLifecycleOwner)
         binding.rvNotificationTimes.adapter = notificationTimeAdapter
         layoutManager = FullWidthLinearLayoutManager(requireContext())
         val dividerItemDecoration = DividerItemDecoration(binding.root.context, LinearLayoutManager.VERTICAL)

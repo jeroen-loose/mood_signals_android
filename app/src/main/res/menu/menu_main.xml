@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.loosethread.moodsignals.MainActivity">
     <item
-        android:id="@+id/fragmentSettings"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/fragmentSignals"
         android:title="Signals"
         app:showAsAction="never"

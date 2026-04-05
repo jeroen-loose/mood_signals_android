@@ -121,6 +121,36 @@ object Db {
         return signals
     }
 
+    fun signalHasEntries(id: Int) : Boolean {
+        val db = helper.readableDatabase
+
+        val query =
+            "SELECT * FROM ${DbContract.SignalValue.TABLE_NAME} WHERE ${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} = ? LIMIT 0,1"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        val result = c.count > 0
+
+        c.close()
+        return result
+    }
+
+    fun deleteSignal(id: Int, archive: Boolean) {
+        val db = helper.writableDatabase
+        var query: String
+        if (archive) {
+            query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                    "SET ${DbContract.Signal.COLUMN_NAME_ARCHIVED} = 1 " +
+                    "WHERE ${BaseColumns._ID} = ?"
+        } else {
+            query = "DELETE FROM ${DbContract.Signal.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        }
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        c.moveToFirst()
+        c.close()
+    }
+
+
     fun getCategories(idToExclude: Int? = null): MutableList<SignalCategory> {
         val db = helper.readableDatabase
         val result = mutableListOf<SignalCategory>()
@@ -177,7 +207,6 @@ object Db {
         c.close()
         return result
     }
-
 
     fun addCategory(description: String) : Int {
         val db = helper.writableDatabase
@@ -293,9 +322,10 @@ object Db {
                 "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
                 "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
                 " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} "
+                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
+                "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ARCHIVED} = 0 "
         if (notificationTimeId != null) {
-            query += "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? "
+            query += "AND ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? "
         }
         query += "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
 
@@ -429,9 +459,12 @@ object Db {
         }
     }
 
-    fun getNotificationTimes(): MutableList<NotificationTime> {
+    fun getNotificationTimes(idToExclude: Int? = null): MutableList<NotificationTime> {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.NotificationTime.TABLE_NAME}"
+        var query = "SELECT * FROM ${DbContract.NotificationTime.TABLE_NAME}"
+        if (idToExclude != null) {
+            query = query.plus(" WHERE ${BaseColumns._ID} != $idToExclude")
+        }
 
         val cursor = db.rawQuery(query, null)
         val result = mutableListOf<NotificationTime>()
@@ -487,8 +520,31 @@ object Db {
         c.close()
     }
 
-    fun deleteNotificationTime(id: Int) {
+    fun notificationTimeHasSignals(id: Int) : Boolean {
+        val db = helper.readableDatabase
+
+        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME} WHERE ${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ?"
+        val params = arrayOf(id.toString())
+        val c = db.rawQuery(query, params)
+        val result = c.count > 0
+
+        c.close()
+        return result
+    }
+
+    fun deleteNotificationTime(id: Int, replacement: Int? = null) {
         val db = helper.writableDatabase
+        replacement?.let {
+            if (it > 0) {
+                val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                        "SET notification_time_id = ? " +
+                        "WHERE notification_time_id = ?"
+                val params = arrayOf(replacement.toString(), id.toString())
+                val c = db.rawQuery(query, params)
+                c.moveToFirst()
+                c.close()
+            }
+        }
         val query = "DELETE FROM ${DbContract.NotificationTime.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)

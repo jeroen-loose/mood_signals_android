@@ -48,7 +48,7 @@ class FragmentAddNotificationTime : Fragment() {
                 null,
                 binding.etTitle.text.toString(),
                 binding.etQuestion.text.toString(),
-                binding.tpTime.hour.toString() + ":" + binding.tpTime.minute.toString(),
+                String.format("%02d:%02d", binding.tpTime.hour, binding.tpTime.minute),
             )
             if(binding.btnAdd.tag != null) {
                 notificationTime.id = binding.btnAdd.tag as Int?
