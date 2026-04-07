@@ -59,7 +59,7 @@ class TodayAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodayViewHolder {
-        val todayBinding = ItemTodayBinding.inflate(LayoutInflater.from(parent.context))
+        val todayBinding = ItemTodayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TodayViewHolder(todayBinding)
     }
 

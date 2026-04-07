@@ -1,7 +1,9 @@
 package com.loosethread.moodsignals
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,6 +12,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -17,11 +21,14 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ActivityMainBinding
 import com.loosethread.moodsignals.helpers.DateManager
+import com.loosethread.moodsignals.helpers.Notification
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,18 +56,16 @@ class MainActivity : AppCompatActivity() {
                 rightMargin = insets.right
             }
 
-            // Return CONSUMED if you don't want the window insets to keep passing
-            // down to descendant views.
             WindowInsetsCompat.CONSUMED
         }
 
-        /*
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        checkNotificationPermission()
+        Notification.createNotificationChannel(this)
+        Notification.scheduleNotifications(applicationContext)
+
+        binding.fab.setOnClickListener { v ->
+            navController.navigate(R.id.action_HomeFragment_to_fragmentToday)
         }
-         */
     }
 
     override fun onDestroy() {
@@ -85,4 +90,17 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
+    fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                val requestPermissionLauncher = registerForActivityResult(
+                    ActivityResultContracts.RequestPermission()
+                ) {
+                }
+            }
+        }
+    }
+
+
 }

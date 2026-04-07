@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddNotificationTimeBinding
 import com.loosethread.moodsignals.datatypes.NotificationTime
+import com.loosethread.moodsignals.helpers.Notification
 
 class FragmentAddNotificationTime : Fragment() {
     private var _binding: FragmentAddNotificationTimeBinding? = null
@@ -56,6 +57,7 @@ class FragmentAddNotificationTime : Fragment() {
             } else {
                 Db.addNotificationTime(notificationTime)
             }
+            Notification.scheduleNotifications(requireContext())
             findNavController().popBackStack()
         }
     }

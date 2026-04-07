@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragments.FragmentToday"
-    style="@style/fragment"
-    >
+    style="@style/fragment">
 
     <LinearLayout
         android:id="@+id/llDate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center_vertical"
+        android:gravity="center"
         >
 
         <TextView
@@ -48,19 +44,14 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/rvSignals"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/llDate"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="500dp"
+        android:layout_weight="1"
         />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clComment"
+    <LinearLayout
+        android:id="@+id/llComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/rvSignals"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:orientation="vertical"
         android:visibility="invisible"
         >
@@ -70,9 +61,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Did anything happen today?"
-            app:layout_constraintTop_toBottomOf="@id/rvSignals"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             />
 
         <EditText
@@ -81,9 +69,6 @@
             android:layout_height="wrap_content"
             android:minLines="4"
             android:maxLines="8"
-            app:layout_constraintTop_toBottomOf="@id/tvComment"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             />
 
         <Button
@@ -91,9 +76,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Done"
-            app:layout_constraintTop_toBottomOf="@id/etComment"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -50,11 +50,18 @@ class FragmentToday : Fragment() {
             spinner.adapter = adapter
         }
 
-        val notificationTime = spinner.selectedItem as NotificationTime
+        val notificationId = arguments?.getInt("notification_time_id") ?: -1
+        var notificationTime : NotificationTime
+        if (notificationId != -1) {
+            notificationTime = notificationTimes.find { it.id == notificationId }!!
+            spinner.setSelection(notificationTimes.indexOf(notificationTime))
+        } else {
+            notificationTime = notificationTimes[0]
+        }
 
         todayAdapter =
             TodayAdapter(Db.getSignalsByNotificationTime(notificationTime.id), DateManager.formatForSql()) {
-                binding.clComment.setVisibility(View.VISIBLE)
+                binding.llComment.setVisibility(View.VISIBLE)
                 binding.btnDone.setOnClickListener {
                     val comment = binding.etComment.text.toString()
                     Db.updateComment(todayAdapter.dayId, comment)
@@ -63,11 +70,7 @@ class FragmentToday : Fragment() {
                 }
             }
         binding.rvSignals.adapter = todayAdapter
-        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(
-            binding.root.context,
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
+        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
@@ -106,7 +109,7 @@ class FragmentToday : Fragment() {
     }
 
     fun resetViews() {
-        binding.clComment.setVisibility(View.INVISIBLE)
+        binding.llComment.setVisibility(View.INVISIBLE)
     }
 
 }
