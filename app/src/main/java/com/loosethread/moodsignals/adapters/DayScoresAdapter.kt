@@ -1,46 +1,36 @@
 package com.loosethread.moodsignals.adapters
 
-import android.graphics.drawable.GradientDrawable
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.loosethread.moodsignals.databinding.ItemChartBinding
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.loosethread.moodsignals.datatypes.LogDay
-import com.loosethread.moodsignals.views.Chart
+import com.loosethread.moodsignals.fragments.FragmentWeekChart
 
 class DayScoresAdapter(
-    private val days: MutableList<LogDay>
-) : RecyclerView.Adapter<DayScoresAdapter.DayScoresViewHolder>() {
-
-    inner class DayScoresViewHolder(private val binding: ItemChartBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(day: LogDay, position: Int) {
-            with (binding.tvDayDescription) {
-                //text = day.description
-                val scores = intArrayOf(
-                    day.score_count.getOrDefault(1, 0),
-                    day.score_count.getOrDefault(2, 0),
-                    day.score_count.getOrDefault(3, 0)
-                )
-                val chart = Chart(binding.root.context, scores)
-                chart.setOrientation(GradientDrawable.Orientation.BOTTOM_TOP)
-                background = chart
-            }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayScoresViewHolder {
-        val binding = ItemChartBinding.inflate(LayoutInflater.from(parent.context))
-        return DayScoresViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: DayScoresViewHolder, position: Int) {
-        val currentDay = days[position]
-        if (currentDay != null)
-            holder.bind(currentDay, position)
-    }
+    manager: FragmentManager,
+    lifecycle: Lifecycle,
+    private val dayScoresPerWeek: MutableList<MutableMap<Int, LogDay>>
+): FragmentStateAdapter(manager, lifecycle) {
 
     override fun getItemCount(): Int {
-        return days.size
+        return dayScoresPerWeek.size
     }
 
+    override fun createFragment(position: Int): Fragment {
+        val arguments = bundleOf(
+            "index" to position,
+            "scores" to dayScoresPerWeek[position]
+        )
+        val result = FragmentWeekChart()
+        result.arguments = arguments
+        return result
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun containsItem(itemId: Long): Boolean = dayScoresPerWeek[itemId.toInt()].isNotEmpty()
 }

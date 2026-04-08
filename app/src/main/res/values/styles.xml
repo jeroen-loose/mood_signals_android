@@ -50,4 +50,12 @@
         <item name="android:backgroundTint">?android:textColorPrimary</item>
     </style>
 
+    <style name="chartitem">
+        <item name="android:layout_margin">8dp</item>
+    </style>
+    <style name="chartitemtext">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

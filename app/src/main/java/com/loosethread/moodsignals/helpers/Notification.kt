@@ -108,7 +108,7 @@ class Notification : BroadcastReceiver() {
 
                 val time = calendar.timeInMillis
 
-                alarmManager.setExactAndAllowWhileIdle(
+                alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     time,
                     pendingIntent

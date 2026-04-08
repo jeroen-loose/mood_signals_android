@@ -1,82 +1,86 @@
 package com.loosethread.moodsignals.fragments
 
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.loosethread.moodsignals.FullWidthLinearLayoutManager
-import com.loosethread.moodsignals.R
+import androidx.viewpager2.widget.ViewPager2
 import com.loosethread.moodsignals.adapters.DayScoresAdapter
-import com.loosethread.moodsignals.adapters.SignalAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentChartBinding
-import com.loosethread.moodsignals.views.Chart
+import com.loosethread.moodsignals.datatypes.Day
+import com.loosethread.moodsignals.datatypes.LogDay
+import java.time.LocalDate
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [FragmentChart.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FragmentChart : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-    lateinit var dayAdapter: DayScoresAdapter
+    lateinit var adapter: DayScoresAdapter
+    private lateinit var viewPager: ViewPager2
 
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChartBinding.inflate(inflater, container, false)
-        val dayScores = Db.getDayScores()
-
-        dayAdapter = DayScoresAdapter(dayScores)
-        binding.rvDays.adapter = dayAdapter
-        binding.rvDays.layoutManager = FullWidthLinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
-
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val scores = groupDayScoresByWeek(Db.getDayScores())
+
+        adapter = DayScoresAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, scores)
+        viewPager = binding.vpDays
+
+        viewPager.setOffscreenPageLimit(3)
+        viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_LTR)
+
+        viewPager.adapter = adapter
+        viewPager.setCurrentItem(viewPager.childCount, false)
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FragmentChart.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FragmentChart().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        private val calendar = Calendar.getInstance()
+        private lateinit var day: Day
+
+        fun groupDayScoresByWeek(dayScores: MutableList<LogDay>): MutableList<MutableMap<Int, LogDay>> {
+            val result = mutableListOf<MutableMap<Int, LogDay>>()
+            var previousWeek = -1
+            var resultIndex = 0
+            var week = -1
+            var weekday: Int
+            calendar.setFirstDayOfWeek(Calendar.MONDAY)
+
+            for (dayScore in dayScores) {
+                day = Db.getDay(dayScore.dayId)
+                val yearInt = day.date.substring(0, 4).toInt()
+                val monthInt = day.date.substring(5, 7).toInt()
+                val dayInt = day.date.substring(8, 10).toInt()
+
+                //calendar.set(yearInt, monthInt, dayInt)
+                calendar.set(Calendar.YEAR, yearInt)
+                calendar.set(Calendar.MONTH, monthInt)
+                calendar.set(Calendar.DAY_OF_MONTH, dayInt)
+                week = calendar.get(Calendar.WEEK_OF_YEAR)
+                weekday = LocalDate.of(yearInt, monthInt, dayInt).getDayOfWeek().getValue()
+                // TODO clean solution that doesn't break when changing years
+                if (weekday == 7) week -= 1
+
+                if (week != previousWeek) {
+                    result.add(mutableMapOf<Int, LogDay>())
+                    resultIndex = result.size - 1
+                    previousWeek = week
                 }
+                result[resultIndex].put(weekday, dayScore)
             }
+            return result
+        }
     }
 }

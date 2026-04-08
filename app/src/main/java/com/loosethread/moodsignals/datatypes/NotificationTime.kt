@@ -13,6 +13,10 @@ class NotificationTime (
         title = tmp.title
         question = tmp.question
         time = tmp.time
+
+        if (time!!.substring(1, 1) == ":") {
+            time = "0" + time
+        }
     }
 
     override fun toString(): String {

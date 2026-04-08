@@ -446,11 +446,16 @@ object Db {
         with(cursor) {
             moveToNext()
 
+            var time = getString(getColumnIndexOrThrow("time"))
+            if (time!!.substring(1, 2) == ":") {
+                time = "0" + time
+            }
+
             val notificationTime = NotificationTime(
                 id,
                 getString(getColumnIndexOrThrow("title")),
                 getString(getColumnIndexOrThrow("question")),
-                getString(getColumnIndexOrThrow("time"))
+                time
             )
 
             close()
