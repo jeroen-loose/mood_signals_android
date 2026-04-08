@@ -13,31 +13,40 @@ class LogSignalAdapter(
     private val signal_scores: MutableList<DaySignalValue>
 ) : RecyclerView.Adapter<LogSignalAdapter.LogSignalViewHolder>() {
 
-    inner class LogSignalViewHolder(private val logSignalsBinding: ItemDaySignalsLogBinding) : RecyclerView.ViewHolder(logSignalsBinding.root) {
+    inner class LogSignalViewHolder(private val binding: ItemDaySignalsLogBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(signal: DaySignalValue, position: Int) {
 
-            logSignalsBinding.clDaySignalLog.backgroundTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(logSignalsBinding.root.context, ColorPicker.get(signal.score)))
+            binding.clDaySignalLog.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(binding.root.context, ColorPicker.get(signal.score)))
+            binding.tvSignalName.text = signal.signalDescription
+            binding.tvSignalScore.text = signal.scoreDescription
+            activate()
+        }
 
-            logSignalsBinding.tvSignalName.text = signal.signalDescription
-            logSignalsBinding.tvSignalName.isSelected = true
-            logSignalsBinding.tvSignalScore.text = signal.scoreDescription
-            logSignalsBinding.tvSignalScore.isSelected = true
+        fun activate() {
+            binding.tvSignalName.isSelected = true
+            binding.tvSignalScore.isSelected = true
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogSignalViewHolder {
-        val logSignalBinding = ItemDaySignalsLogBinding.inflate(LayoutInflater.from(parent.context))
+        val logSignalBinding = ItemDaySignalsLogBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return LogSignalViewHolder(logSignalBinding)
     }
 
     override fun onBindViewHolder(holder: LogSignalViewHolder, position: Int) {
         val currentSignal = signal_scores[position]
-        if (currentSignal != null)
+        if (currentSignal != null) {
             holder.bind(currentSignal, position)
+        }
     }
 
     override fun getItemCount(): Int {
         return signal_scores.size
     }
+
 }
