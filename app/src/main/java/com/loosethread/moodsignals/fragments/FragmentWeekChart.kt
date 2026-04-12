@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.loosethread.moodsignals.databinding.FragmentWeekChartBinding
 import com.loosethread.moodsignals.datatypes.LogDay
+import com.loosethread.moodsignals.helpers.DaysLogByWeek
 import com.loosethread.moodsignals.views.Chart
 
 class FragmentWeekChart : Fragment() {
@@ -28,34 +29,34 @@ class FragmentWeekChart : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val scores = arguments?.get("scores") as MutableMap<Int, LogDay>
-        for (i in 1..7) {
-            val score = scores[i]
-            val tvDayOfWeek = binding.root.findViewById<TextView>(resources.getIdentifier("tvWeekday$i", "id", requireContext().packageName))
-            val chartContainer = binding.root.findViewById<View>(resources.getIdentifier("chartContainer$i", "id", requireContext().packageName))
+            val scores = DaysLogByWeek.getWeek(requireArguments().get("index") as Int)
+            for (i in 1..7) {
+                val score = scores!!.get(i)
+                val tvDayOfWeek = binding.root.findViewById<TextView>(resources.getIdentifier("tvWeekday$i", "id", requireContext().packageName))
+                val chartContainer = binding.root.findViewById<View>(resources.getIdentifier("chartContainer$i", "id", requireContext().packageName))
 
-            tvDayOfWeek.text = when (i) {
-                1 -> "M"
-                2 -> "T"
-                3 -> "W"
-                4 -> "T"
-                5 -> "F"
-                6 -> "S"
-                7 -> "S"
-                else -> {
-                    ""
+                tvDayOfWeek.text = when (i) {
+                    1 -> "M"
+                    2 -> "T"
+                    3 -> "W"
+                    4 -> "T"
+                    5 -> "F"
+                    6 -> "S"
+                    7 -> "S"
+                    else -> {
+                        ""
+                    }
+                }
+
+                if (score != null) {
+                    val background = Chart(requireContext(), intArrayOf(
+                        score.score_count[1] ?: 0,
+                        score.score_count[2] ?: 0,
+                        score.score_count[3] ?: 0
+                    ))
+                    background.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
+                    chartContainer.background = background
                 }
             }
-
-            if (score != null) {
-                val background = Chart(requireContext(), intArrayOf(
-                    score.score_count[1] ?: 0,
-                    score.score_count[2] ?: 0,
-                    score.score_count[3] ?: 0
-                ))
-                background.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
-                chartContainer.background = background
-            }
-        }
     }
 }

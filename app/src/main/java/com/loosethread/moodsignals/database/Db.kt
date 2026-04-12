@@ -697,7 +697,7 @@ object Db {
                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
                "GROUP BY ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
                "ORDER BY " +
-               "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} ASC, " +
+               "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} DESC, " +
                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} ASC"
        val c = db.rawQuery(query, null)
        var result = mutableListOf<LogDay>()

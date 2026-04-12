@@ -7,21 +7,24 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.loosethread.moodsignals.datatypes.LogDay
 import com.loosethread.moodsignals.fragments.FragmentWeekChart
+import com.loosethread.moodsignals.helpers.DaysLogByWeek
 
 class DayScoresAdapter(
     manager: FragmentManager,
     lifecycle: Lifecycle,
-    private val dayScoresPerWeek: MutableList<MutableMap<Int, LogDay>>
+    private val dayScoresPerWeek: MutableMap<Int, MutableMap<Int, LogDay>> = DaysLogByWeek.getWeeks()
 ): FragmentStateAdapter(manager, lifecycle) {
+
+    private val weekKeys: List<Int> get() = dayScoresPerWeek.keys.sortedDescending()
 
     override fun getItemCount(): Int {
         return dayScoresPerWeek.size
     }
 
     override fun createFragment(position: Int): Fragment {
+        val weekKey = weekKeys[position]
         val arguments = bundleOf(
-            "index" to position,
-            "scores" to dayScoresPerWeek[position]
+            "index" to weekKey
         )
         val result = FragmentWeekChart()
         result.arguments = arguments
@@ -32,5 +35,6 @@ class DayScoresAdapter(
         return position.toLong()
     }
 
-    override fun containsItem(itemId: Long): Boolean = dayScoresPerWeek[itemId.toInt()].isNotEmpty()
+    override fun containsItem(itemId: Long): Boolean =
+        dayScoresPerWeek[itemId.toInt()]?.isNotEmpty() ?: false
 }

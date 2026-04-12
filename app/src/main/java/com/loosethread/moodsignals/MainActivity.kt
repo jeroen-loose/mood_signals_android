@@ -28,7 +28,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Notification.scheduleNotifications(applicationContext)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +67,6 @@ class MainActivity : AppCompatActivity() {
 
         checkNotificationPermission()
         Notification.createNotificationChannel(this)
-        Notification.scheduleNotifications(applicationContext)
 
         binding.fab.setOnClickListener { v ->
             navController.navigate(R.id.action_HomeFragment_to_fragmentToday)
@@ -94,11 +99,12 @@ class MainActivity : AppCompatActivity() {
     fun checkNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                val requestPermissionLauncher = registerForActivityResult(
-                    ActivityResultContracts.RequestPermission()
-                ) {
-                }
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                Notification.scheduleNotifications(applicationContext)
             }
+        } else {
+            Notification.scheduleNotifications(applicationContext)
         }
     }
 
