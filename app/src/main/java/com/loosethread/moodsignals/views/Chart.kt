@@ -15,14 +15,28 @@ class Chart : GradientDrawable
     var orange: Int = 0
     var red: Int = 0
 
-    constructor(context: Context, values: IntArray)  {
+    companion object {
+        val ROUNDED_TOP = 0
+        val ROUNDED_ALL = 1
+    }
+    constructor(context: Context, values: IntArray, style: Int? = null)  {
         green = ContextCompat.getColor(context,R.color.green)
         orange = ContextCompat.getColor(context,R.color.orange)
         red = ContextCompat.getColor(context,R.color.red)
 
         setOrientation(Orientation.LEFT_RIGHT)
         setPercentages(values)
-        cornerRadius = 25f
+        if (style != null) {
+            setStyle(style)
+        }
+    }
+
+    fun setStyle(style: Int) {
+        when (style) {
+            ROUNDED_TOP -> setCornerRadii(floatArrayOf(25f, 25f, 25f, 25f, 0f, 0f, 0f, 0f))
+            ROUNDED_ALL -> setCornerRadii(floatArrayOf(25f, 25f, 25f, 25f, 25f, 25f, 25f, 25f))
+            else -> setCornerRadii(floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f))
+        }
     }
 
     fun setPercentages(values : IntArray) {

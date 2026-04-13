@@ -16,8 +16,7 @@
         android:id="@+id/tvCategoryName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/listitem"
-        android:textColor="@color/white"
+        style="@style/listitem.title"
         />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -5,7 +5,7 @@
 
     <style name="list">
         <item name="android:background">@drawable/rounded_border</item>
-        <item name="android:padding">2dp</item>
+        <item name="android:backgroundTint">@color/background_gray</item>
     </style>
 
     <style name="listtitle">
@@ -14,6 +14,12 @@
 
     <style name="listitem">
         <item name="android:padding">8dp</item>"
+    </style>
+
+    <style name="listitem.title">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">25dp</item>
+        <item name="cornerSizeTopRight">25dp</item>
     </style>
 
     <style name="comment" parent="TextAppearance.AppCompat">
