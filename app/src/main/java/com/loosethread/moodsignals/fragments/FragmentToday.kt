@@ -30,37 +30,34 @@ class FragmentToday : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val signals = Db.getSignalsByNotificationTime()
+        val notificationId = arguments?.getInt("notification_time_id") ?: -1
+        val notificationTime = notificationTimes.find { it.id == notificationId }?: notificationTimes[0]
+        val signals = Db.getSignalsByNotificationTime(notificationTime.id)
+
+        val date = arguments?.getString("date") ?: DateManager.formatForSql()
+
         if (signals.size == 0) {
             findNavController().popBackStack()
         }
 
-
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
 
-        binding.tvDate.text = DateManager.formatForDisplay()
-
-        val spinner: Spinner = binding.spNotificationTime
-        ArrayAdapter(
-            requireContext(),
-            R.layout.simple_spinner_item,
-            notificationTimes
-        ).also { adapter ->
-            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
-
-        val notificationId = arguments?.getInt("notification_time_id") ?: -1
-        var notificationTime : NotificationTime
-        if (notificationId != -1) {
-            notificationTime = notificationTimes.find { it.id == notificationId }!!
-            spinner.setSelection(notificationTimes.indexOf(notificationTime))
-        } else {
-            notificationTime = notificationTimes[0]
-        }
+        binding.tvDate.text = DateManager.formatForDisplay(date)
 
         todayAdapter =
-            TodayAdapter(Db.getSignalsByNotificationTime(notificationTime.id), DateManager.formatForSql()) {
+            TodayAdapter(
+                childFragmentManager,
+                lifecycle,
+                signals,
+                date
+            )
+        todayAdapter.onScoreSelected = { signalId, score, isLastItem ->
+            if (score != -1) {
+                Db.insertDaySignalValue(Db.getDayId(date), signalId, score)
+            } else {
+                Db.removeDaySignalValue(Db.getDayId(date), signalId)
+            }
+            if (isLastItem) {
                 binding.llComment.setVisibility(View.VISIBLE)
                 binding.btnDone.setOnClickListener {
                     val comment = binding.etComment.text.toString()
@@ -68,22 +65,12 @@ class FragmentToday : Fragment() {
 
                     findNavController().popBackStack()
                 }
-            }
-        binding.rvSignals.adapter = todayAdapter
-        binding.rvSignals.layoutManager = FullWidthLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
-                val selectedItem = parent.getItemAtPosition(pos) as NotificationTime
-                todayAdapter.updateSignals(Db.getSignalsByNotificationTime(selectedItem.id))
-                todayAdapter.notifyDataSetChanged()
-                resetViews()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
+            } else {
+                binding.llComment.setVisibility(View.INVISIBLE)
+                binding.vpSignals.setCurrentItem(binding.vpSignals.currentItem + 1, true)
             }
         }
+        binding.vpSignals.adapter = todayAdapter
 
         return binding.root
 
@@ -92,14 +79,6 @@ class FragmentToday : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.llDate.setOnClickListener {
-            val dialog = DatePickerDialog()
-            dialog.show(parentFragmentManager, "datePicker")
-            parentFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { requestKey, bundle ->
-                binding.tvDate.text = DateManager.formatForDisplay()
-                todayAdapter.setDate(DateManager.formatForSql())
-            }
-        }
         binding.etComment.setText(Db.getComment(todayAdapter.dayId))
     }
 
@@ -109,7 +88,7 @@ class FragmentToday : Fragment() {
     }
 
     fun resetViews() {
-        binding.llComment.setVisibility(View.INVISIBLE)
+        binding.llComment.setVisibility(View.GONE)
     }
 
 }

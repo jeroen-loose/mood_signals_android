@@ -6,45 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".fragments.FragmentToday"
-    style="@style/fragment">
+    style="@style/fragment"
+    android:gravity="center_horizontal"
+    >
 
-    <LinearLayout
-        android:id="@+id/llDate"
+    <TextView
+        android:id="@+id/tvDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        >
+        android:text="today"
+        />
 
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="today"
-            />
-
-        <ImageView
-            android:id="@+id/ivCalendarIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/calendar"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            />
-
-        <Spinner
-            android:id="@+id/spNotificationTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            style="@style/spinner"
-            />
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/rvSignals"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpSignals"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
         />
 
@@ -54,6 +30,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="invisible"
+        android:gravity="center_horizontal"
         >
 
         <TextView

@@ -1,99 +1,52 @@
 package com.loosethread.moodsignals.adapters
 
-import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.Button
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.loosethread.moodsignals.database.Db
-import com.loosethread.moodsignals.databinding.ItemTodayBinding
-import com.loosethread.moodsignals.datatypes.DaySignalValue
 import com.loosethread.moodsignals.datatypes.Signal
+import com.loosethread.moodsignals.fragments.FragmentSingleItemToday
+
 
 class TodayAdapter(
-    private var signals: MutableList<Signal>,
-    private var selectedDate: String,
-    private val onAllSignalsChecked: () -> Unit
+    manager: FragmentManager,
+    lifecycle: Lifecycle,
+    private val signals: MutableList<Signal>,
+    private var selectedDate: String
+): FragmentStateAdapter(manager, lifecycle) {
 
-) : RecyclerView.Adapter<TodayAdapter.TodayViewHolder>() {
     var dayId = Db.getDayId(selectedDate)
-    private var daySignalValues = mutableListOf<DaySignalValue>()
-    private lateinit var buttons: List<Button>
+    var onScoreSelected: ((signalId: Int, score: Int, isLastItem: Boolean) -> Unit)? = null
 
-    inner class TodayViewHolder(private val todayBinding: ItemTodayBinding) : RecyclerView.ViewHolder(todayBinding.root) {
-        fun bind(signal: Signal, position: Int) {
-            dayId = Db.getDayId(selectedDate)
-            daySignalValues = Db.getDaySignalValues(dayId)
+    override fun getItemCount(): Int = signals.size
 
-            buttons =  listOf(
-                todayBinding.btnScoreGreen,
-                todayBinding.btnScoreOrange,
-                todayBinding.btnScoreRed
-            )
-            todayBinding.tvSignalName.setText(signal.description)
-
-            for(index in buttons.indices) {
-                buttons[index].setText(signal.scores[index].description)
-                if (daySignalValues.any { it.signalId == signal.id && it.score == signal.scores[index].score }) {
-                    buttons[index].setTextColor(Color.BLACK)
-                } else {
-                    buttons[index].setTextColor(Color.WHITE)
-                }
-
-                if (position < signals.size - 1) {
-                    buttons[index].setOnClickListener {
-                        Db.insertDaySignalValue(dayId, signal.id!!, signal.scores[index].score)
-                        updateButtonColors(index)
-                        val rv = itemView.parent as? RecyclerView
-                        rv?.smoothScrollToPosition(position + 1)
-                    }
-                } else {
-                    buttons[index].setOnClickListener {
-                        Db.insertDaySignalValue(dayId, signal.id!!, signal.scores[index].score)
-                        updateButtonColors(index)
-                        onAllSignalsChecked()
-                    }
-                }
-            }
+    override fun createFragment(position: Int): Fragment {
+        var isLastItem: Boolean
+        if (position < signals.size - 1) {
+            isLastItem = false
+        } else {
+            isLastItem = true
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodayViewHolder {
-        val todayBinding = ItemTodayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TodayViewHolder(todayBinding)
-    }
-
-    override fun onBindViewHolder(holder: TodayViewHolder, position: Int) {
-        val currentSignal = signals[position]
-        holder.bind(currentSignal, position)
-    }
-
-    override fun getItemCount(): Int {
-        return signals.size
-    }
-
-    fun setDate(date: String) {
-        if (Db.dayIsEmpty(dayId)) {
-            Db.removeDay(dayId)
+        val arguments = bundleOf(
+            "signalId" to getItemId(position).toInt(),
+            "dayId" to Db.getDayId(selectedDate)
+        )
+        val result = FragmentSingleItemToday()
+        result.onScoreSelected = { signalId, score ->
+            onScoreSelected?.invoke(signalId, score, isLastItem)
         }
-        selectedDate = date
-        dayId = Db.getDayId(selectedDate)
-        daySignalValues = Db.getDaySignalValues(dayId)
-        notifyDataSetChanged()
+        result.arguments = arguments
+
+        return result
     }
 
-    fun updateSignals(signals: MutableList<Signal>) {
-        this.signals = signals
-        notifyDataSetChanged()
+    override fun getItemId(position: Int): Long {
+        return signals[position].id!!.toLong()
     }
 
-    fun updateButtonColors(index: Int) {
-        for(i in buttons.indices) {
-            if (i == index) {
-                buttons[i].setTextColor(Color.BLACK)
-            } else {
-                buttons[i].setTextColor(Color.WHITE)
-            }
-        }
-    }
+    override fun containsItem(itemId: Long): Boolean = signals.any { it.id!!.toLong() == itemId }
+
 }

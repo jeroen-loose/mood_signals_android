@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import androidx.core.content.ContextCompat
 import com.loosethread.moodsignals.R
+import com.loosethread.moodsignals.database.Db
 
 class Chart : GradientDrawable
 {
@@ -14,6 +15,7 @@ class Chart : GradientDrawable
     var green: Int = 0
     var orange: Int = 0
     var red: Int = 0
+    var gray: Int = 0
 
     companion object {
         val ROUNDED_TOP = 0
@@ -23,6 +25,7 @@ class Chart : GradientDrawable
         green = ContextCompat.getColor(context,R.color.green)
         orange = ContextCompat.getColor(context,R.color.orange)
         red = ContextCompat.getColor(context,R.color.red)
+        gray = ContextCompat.getColor(context, R.color.background_gray)
 
         setOrientation(Orientation.LEFT_RIGHT)
         setPercentages(values)
@@ -40,6 +43,12 @@ class Chart : GradientDrawable
     }
 
     fun setPercentages(values : IntArray) {
+        if (values.sum() == 0) {
+            colorArray.add(gray)
+            colorArray.add(gray)
+            percentages.add(0f)
+            percentages.add(100f)
+        }
         if (values[0] > 0) {
             colorArray.add(green)
             colorArray.add(green)

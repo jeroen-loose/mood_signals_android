@@ -121,6 +121,17 @@ object Db {
         return signals
     }
 
+    fun getSignalCount() : Int {
+        val db = helper.readableDatabase
+
+        // TODO: handle archived signals
+        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME}"
+        val c = db.rawQuery(query, null)
+        val result = c.count
+        c.close()
+        return result
+    }
+
     fun signalHasEntries(id: Int) : Boolean {
         val db = helper.readableDatabase
 
@@ -570,6 +581,17 @@ object Db {
                 "$scoreId" +
                 ")"
         val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        c.close()
+    }
+
+    fun removeDaySignalValue(dayId: Int, signalId: Int) {
+        val db = helper.writableDatabase
+        val query = "DELETE FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
+                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+                "AND ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ?"
+        val params = arrayOf(dayId.toString(), signalId.toString())
+        val c = db.rawQuery(query, params)
         c.moveToFirst()
         c.close()
     }
