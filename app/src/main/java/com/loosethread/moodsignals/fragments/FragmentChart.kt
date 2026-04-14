@@ -9,11 +9,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.loosethread.moodsignals.adapters.DayScoresAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentChartBinding
-import com.loosethread.moodsignals.datatypes.Day
-import com.loosethread.moodsignals.datatypes.LogDay
 import com.loosethread.moodsignals.helpers.DaysLogByWeek
-import java.time.LocalDate
-import java.util.Calendar
 
 class FragmentChart : Fragment() {
     lateinit var adapter: DayScoresAdapter
@@ -44,5 +40,13 @@ class FragmentChart : Fragment() {
         viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
 
         viewPager.adapter = adapter
+        adapter.onWeekSelected = { dayIndex: Int, weekIndex: Int ->
+            viewPager.setCurrentItem(weekIndex, true)
+            (viewPager.adapter as DayScoresAdapter).setDayIndex(dayIndex)
+        }
+    }
+
+    fun selectDay(dayId: Int) {
+        (viewPager.adapter as DayScoresAdapter).selectWeek(dayId)
     }
 }

@@ -17,9 +17,11 @@ class DaysLogPagerAdapter(
     override fun getItemCount(): Int = days.size
 
     override fun createFragment(position: Int): Fragment {
-        val arguments = bundleOf("dayId" to getItemId(position).toInt())
+        val dayId = getItemId(position).toInt()
+        val arguments = bundleOf("dayId" to dayId)
         val result = FragmentSingleDay()
         result.arguments = arguments
+
         return result
     }
 

@@ -1,5 +1,6 @@
 package com.loosethread.moodsignals.fragments
 
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.databinding.FragmentWeekChartBinding
 import com.loosethread.moodsignals.datatypes.LogDay
 import com.loosethread.moodsignals.helpers.DaysLogByWeek
@@ -61,6 +63,28 @@ class FragmentWeekChart : Fragment() {
     }
 
     fun selectDay(index: Int) {
+        for (i in 1..7) {
+            val tvDayOfWeek = binding.root.findViewById<TextView>(
+                resources.getIdentifier(
+                    "tvWeekday$i",
+                    "id",
+                    requireContext().packageName
+                )
+            )
+            val chartContainer = binding.root.findViewById<View>(
+                resources.getIdentifier(
+                    "chartContainer$i",
+                    "id",
+                    requireContext().packageName
+                )
+            )
+
+            if (i == index) {
+                tvDayOfWeek.setVisibility(View.VISIBLE)
+            } else {
+                tvDayOfWeek.setVisibility(View.INVISIBLE)
+            }
+        }
 
     }
 }

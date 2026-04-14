@@ -11,10 +11,12 @@ import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentDaysLogBinding
 
 class FragmentDaysLog : Fragment() {
+    var onDayChanged: ((dayId: Int) -> Unit)? = null
     private var _binding: FragmentDaysLogBinding? = null
 
     private val binding get() = _binding!!
     private lateinit var viewPager: ViewPager2
+    val days = Db.getDays()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,8 +31,16 @@ class FragmentDaysLog : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager = binding.vpDays
-        val adapter = DaysLogPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, Db.getDays())
+        val adapter = DaysLogPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, days)
         viewPager.adapter = adapter
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val dayId = days[position].id
+                onDayChanged?.invoke(dayId)
+            }
+        })
 
         val child = viewPager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView
         child?.let {

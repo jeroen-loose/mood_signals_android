@@ -14,8 +14,10 @@ class DayScoresAdapter(
     lifecycle: Lifecycle,
     private val dayScoresPerWeek: MutableMap<Int, MutableMap<Int, LogDay>> = DaysLogByWeek.getWeeks()
 ): FragmentStateAdapter(manager, lifecycle) {
+    var onWeekSelected: ((dayIndex: Int, weekIndex: Int) -> Unit)? = null
 
     private val weekKeys: List<Int> get() = dayScoresPerWeek.keys.sortedDescending()
+    private var weekChart: FragmentWeekChart? = null
 
     override fun getItemCount(): Int {
         return dayScoresPerWeek.size
@@ -26,9 +28,9 @@ class DayScoresAdapter(
         val arguments = bundleOf(
             "index" to weekKey
         )
-        val result = FragmentWeekChart()
-        result.arguments = arguments
-        return result
+        weekChart = FragmentWeekChart()
+        weekChart!!.arguments = arguments
+        return weekChart!!
     }
 
     override fun getItemId(position: Int): Long {
@@ -37,4 +39,24 @@ class DayScoresAdapter(
 
     override fun containsItem(itemId: Long): Boolean =
         dayScoresPerWeek[itemId.toInt()]?.isNotEmpty() ?: false
+
+    fun selectWeek(dayId: Int) {
+        for (weekIndex in dayScoresPerWeek.keys) {
+            val week = dayScoresPerWeek[weekIndex]
+            for (dayIndex in week!!.keys) {
+               if ((week[dayIndex] as LogDay).dayId == dayId) {
+                   for (index in weekKeys.indices) {
+                      if (weekKeys[index] == weekIndex) {
+                          onWeekSelected?.invoke(dayIndex, index)
+                          return
+                      }
+                   }
+               }
+            }
+        }
+    }
+
+    fun setDayIndex(dayIndex: Int) {
+        weekChart?.selectDay(dayIndex)
+    }
 }
