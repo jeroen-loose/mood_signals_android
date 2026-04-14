@@ -39,6 +39,7 @@ class FragmentDaysLog : Fragment() {
         }
         viewPager.setOffscreenPageLimit(3)
         viewPager.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
+
     }
 
     override fun onDestroyView() {

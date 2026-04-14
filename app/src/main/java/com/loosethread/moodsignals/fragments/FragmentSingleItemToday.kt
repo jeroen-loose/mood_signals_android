@@ -14,6 +14,7 @@ import com.loosethread.moodsignals.datatypes.Signal
 
 class FragmentSingleItemToday : Fragment() {
     var onScoreSelected: ((signalId: Int, score: Int) -> Unit)? = null
+    var onCategoryId: ((categoryId: Int) -> Unit)? = null
 
     private val dayId: Int by lazy { requireArguments().getInt("dayId") }
     private val signalId: Int by lazy { requireArguments().getInt("signalId") }
@@ -44,11 +45,10 @@ class FragmentSingleItemToday : Fragment() {
         binding.tvSignalName.setText(signal.description)
 
         for(index in buttons.indices) {
-            buttons[index].setText(signal.scores[index].description)
             if (daySignalValues.any { it.signalId == signal.id && it.score == signal.scores[index].score }) {
-                buttons[index].setTextColor(Color.BLACK)
+                setButtonText(buttons[index], signal.scores[index].description.toString(), true)
             } else {
-                buttons[index].setTextColor(Color.WHITE)
+                setButtonText(buttons[index], signal.scores[index].description.toString(), false)
             }
 
             buttons[index].setOnClickListener {
@@ -65,6 +65,11 @@ class FragmentSingleItemToday : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        onCategoryId?.invoke(signal.categoryId!!)
+    }
+
     override fun onResume() {
         super.onResume()
         daySignalValues = Db.getDaySignalValues(dayId)
@@ -79,10 +84,18 @@ class FragmentSingleItemToday : Fragment() {
     fun updateButtonColors(index: Int) {
         for(i in buttons.indices) {
             if (i == index) {
-                buttons[i].setTextColor(Color.BLACK)
+                setButtonText(buttons[i], signal.scores[i].description.toString(), true)
             } else {
-                buttons[i].setTextColor(Color.WHITE)
+                setButtonText(buttons[i], signal.scores[i].description.toString(), false)
             }
+        }
+    }
+
+    fun setButtonText(button: Button, text: String, selected: Boolean) {
+        if (selected) {
+            button.setText("\u25b6 " + text + " \u25c0")
+        } else {
+            button.setText(text)
         }
     }
 }

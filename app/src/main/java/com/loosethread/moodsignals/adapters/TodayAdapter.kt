@@ -18,7 +18,9 @@ class TodayAdapter(
 ): FragmentStateAdapter(manager, lifecycle) {
 
     var dayId = Db.getDayId(selectedDate)
+    var categoryId: Int = -1
     var onScoreSelected: ((signalId: Int, score: Int, isLastItem: Boolean) -> Unit)? = null
+    var onCategoryId: ((categoryId: Int) -> Unit)? = null
 
     override fun getItemCount(): Int = signals.size
 
@@ -37,6 +39,12 @@ class TodayAdapter(
         val result = FragmentSingleItemToday()
         result.onScoreSelected = { signalId, score ->
             onScoreSelected?.invoke(signalId, score, isLastItem)
+        }
+        result.onCategoryId = { categoryId ->
+            if (this.categoryId != categoryId) {
+                this.categoryId = categoryId
+                onCategoryId?.invoke(categoryId)
+            }
         }
         result.arguments = arguments
 

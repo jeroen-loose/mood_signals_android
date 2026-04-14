@@ -59,4 +59,8 @@ class FragmentWeekChart : Fragment() {
                 }
             }
     }
+
+    fun selectDay(index: Int) {
+
+    }
 }

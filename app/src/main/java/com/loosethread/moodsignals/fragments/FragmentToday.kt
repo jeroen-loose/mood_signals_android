@@ -5,18 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.adapters.TodayAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentTodayBinding
-import com.loosethread.moodsignals.datatypes.NotificationTime
-import com.loosethread.moodsignals.dialogs.DatePickerDialog
 import com.loosethread.moodsignals.helpers.DateManager
 
 class FragmentToday : Fragment() {
@@ -41,8 +34,7 @@ class FragmentToday : Fragment() {
         }
 
         _binding = FragmentTodayBinding.inflate(inflater, container, false)
-
-        binding.tvDate.text = DateManager.formatForDisplay(date)
+        (requireActivity() as? androidx.appcompat.app.AppCompatActivity)?.supportActionBar?.title = DateManager.formatForDisplay(date)
 
         todayAdapter =
             TodayAdapter(
@@ -69,6 +61,14 @@ class FragmentToday : Fragment() {
                 binding.llComment.setVisibility(View.INVISIBLE)
                 binding.vpSignals.setCurrentItem(binding.vpSignals.currentItem + 1, true)
             }
+        }
+        todayAdapter.onCategoryId = { categoryId ->
+            val categoryName = when {
+                categoryId > 0 -> Db.getCategory(categoryId).description
+                else -> "Uncategorized"
+            }
+
+            binding.tvCategoryName.text = categoryName
         }
         binding.vpSignals.adapter = todayAdapter
 

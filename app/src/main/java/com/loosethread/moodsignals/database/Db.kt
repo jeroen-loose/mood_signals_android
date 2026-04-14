@@ -338,7 +338,7 @@ object Db {
         if (notificationTimeId != null) {
             query += "AND ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? "
         }
-        query += "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+        query += "ORDER BY category_id ASC, ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
 
         var params: Array<String>? = null
         if (notificationTimeId != null) {
