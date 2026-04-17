@@ -56,4 +56,9 @@ class FragmentDaysLog : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+    fun selectDay(dayId: Int) {
+        val dayIndex = (viewPager.adapter as DaysLogPagerAdapter).getPosition(dayId)
+        viewPager.setCurrentItem(dayIndex, true)
+    }
 }

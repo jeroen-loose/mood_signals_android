@@ -66,6 +66,7 @@
     <style name="chartitemtext">
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>"
     </style>
 
     <style name="selected">

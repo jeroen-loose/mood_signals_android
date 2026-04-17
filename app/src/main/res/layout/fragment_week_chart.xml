@@ -1,158 +1,202 @@
-<LinearLayout
-    android:id="@+id/llWeekChart"
+<LinearLayout android:id="@+id/llWeekChart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_gravity="center_horizontal"
+    android:orientation="vertical"
     android:layoutDirection="ltr"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:id="@+id/llDayChart1"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
         >
+
         <ImageView
             android:id="@+id/chartContainer1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart2"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart3"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart4"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer4"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart5"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer5"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart6"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer6"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/chartitemtext"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/llDayChart7"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
         <ImageView
             android:id="@+id/chartContainer7"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             style="@style/chartitem"
             />
-        <TextView
-            android:id="@+id/tvWeekday7"
-            android:layout_width="match_parent"
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/tvWeekday1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/chartitemtext"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/tvWeekday2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/chartitemtext"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <TextView
+                android:id="@+id/tvWeekday3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/chartitemtext"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        <TextView
+            android:id="@+id/tvWeekday4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             style="@style/chartitemtext"
             />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        <TextView
+            android:id="@+id/tvWeekday5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/chartitemtext"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        <TextView
+            android:id="@+id/tvWeekday6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/chartitemtext"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        <TextView
+            android:id="@+id/tvWeekday7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/chartitemtext"
+            />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 </LinearLayout>

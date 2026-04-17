@@ -17,6 +17,10 @@ import com.loosethread.moodsignals.views.Chart
 class FragmentWeekChart : Fragment() {
     private var _binding: FragmentWeekChartBinding? = null
     private val binding get() = _binding!!
+    private var dayIndex: Int = 0
+    private var weekKey: Int = 0
+
+    var onDaySelected: ((dayId: Int) -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,8 +34,9 @@ class FragmentWeekChart : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+            weekKey = requireArguments().get("index") as Int
 
-            val scores = DaysLogByWeek.getWeek(requireArguments().get("index") as Int)
+            val scores = DaysLogByWeek.getWeek(weekKey)
             for (i in 1..7) {
                 val score = scores!!.get(i)
                 val tvDayOfWeek = binding.root.findViewById<TextView>(resources.getIdentifier("tvWeekday$i", "id", requireContext().packageName))
@@ -50,41 +55,47 @@ class FragmentWeekChart : Fragment() {
                     }
                 }
 
-                if (score != null) {
-                    val background = Chart(requireContext(), intArrayOf(
-                        score.score_count[1] ?: 0,
-                        score.score_count[2] ?: 0,
-                        score.score_count[3] ?: 0
-                    ))
-                    background.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
-                    chartContainer.background = background
+                val background = Chart(requireContext(), intArrayOf(
+                    score?.score_count[1] ?: 0,
+                    score?.score_count[2] ?: 0,
+                    score?.score_count[3] ?: 0
+                ))
+                background.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
+                chartContainer.background = background
+
+                tvDayOfWeek.setOnClickListener {
+                    dayClicked(score?.dayId ?: 0)
+                }
+                chartContainer.setOnClickListener {
+                    dayClicked(score?.dayId ?: 0)
                 }
             }
     }
 
     fun selectDay(index: Int) {
-        for (i in 1..7) {
-            val tvDayOfWeek = binding.root.findViewById<TextView>(
+        if (dayIndex > 0) {
+            binding.root.findViewById<TextView>(
                 resources.getIdentifier(
-                    "tvWeekday$i",
+                    "tvWeekday$dayIndex",
                     "id",
                     requireContext().packageName
                 )
-            )
-            val chartContainer = binding.root.findViewById<View>(
-                resources.getIdentifier(
-                    "chartContainer$i",
-                    "id",
-                    requireContext().packageName
-                )
-            )
-
-            if (i == index) {
-                tvDayOfWeek.setVisibility(View.VISIBLE)
-            } else {
-                tvDayOfWeek.setVisibility(View.INVISIBLE)
-            }
+            )?.background = null
         }
+        if (index > 0) {
+            binding.root.findViewById<TextView>(
+                resources.getIdentifier(
+                    "tvWeekday$index",
+                    "id",
+                    requireContext().packageName
+                )
+            )?.background = resources.getDrawable(R.drawable.circle_background)
+        }
+        dayIndex = index
+    }
 
+    fun dayClicked(index: Int) {
+        selectDay(index)
+        onDaySelected?.invoke(index)
     }
 }

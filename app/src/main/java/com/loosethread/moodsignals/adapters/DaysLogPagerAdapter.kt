@@ -30,4 +30,8 @@ class DaysLogPagerAdapter(
     }
 
     override fun containsItem(itemId: Long): Boolean = days.any { it.id.toLong() == itemId }
+
+    fun getPosition(dayId: Int) : Int {
+        return days.indexOfFirst { it.id == dayId }
+    }
 }

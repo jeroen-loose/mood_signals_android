@@ -10,14 +10,19 @@ import com.loosethread.moodsignals.fragments.FragmentWeekChart
 import com.loosethread.moodsignals.helpers.DaysLogByWeek
 
 class DayScoresAdapter(
-    manager: FragmentManager,
+    private val manager: FragmentManager,
     lifecycle: Lifecycle,
     private val dayScoresPerWeek: MutableMap<Int, MutableMap<Int, LogDay>> = DaysLogByWeek.getWeeks()
 ): FragmentStateAdapter(manager, lifecycle) {
+    // handles selection of new day by scrolling to individual day details
     var onWeekSelected: ((dayIndex: Int, weekIndex: Int) -> Unit)? = null
+    // handles selection of new day by tapping one in the chart
+    var onDaySelected: ((dayId: Int) -> Unit)? = null
 
     private val weekKeys: List<Int> get() = dayScoresPerWeek.keys.sortedDescending()
-    private var weekChart: FragmentWeekChart? = null
+
+    private var dayIndex: Int = 0
+    private var weekKey: Int = 0
 
     override fun getItemCount(): Int {
         return dayScoresPerWeek.size
@@ -28,9 +33,19 @@ class DayScoresAdapter(
         val arguments = bundleOf(
             "index" to weekKey
         )
-        weekChart = FragmentWeekChart()
-        weekChart!!.arguments = arguments
-        return weekChart!!
+        val fragment = FragmentWeekChart()
+        fragment.arguments = arguments
+        fragment.onDaySelected = { dayId ->
+           onDaySelected?.invoke(dayId)
+        }
+        return fragment
+    }
+
+    fun setDayIndex(viewPagerPosition: Int, dayIndex: Int) {
+        val tag = "f" + getItemId(viewPagerPosition)
+        val fragment = manager.findFragmentByTag(tag) as? FragmentWeekChart
+
+        fragment?.selectDay(dayIndex)
     }
 
     override fun getItemId(position: Int): Long {
@@ -47,16 +62,18 @@ class DayScoresAdapter(
                if ((week[dayIndex] as LogDay).dayId == dayId) {
                    for (index in weekKeys.indices) {
                       if (weekKeys[index] == weekIndex) {
+                          if(this.dayIndex > 0 && this.weekKey > 0) {
+                              val vpWeekIndex = manager.findFragmentByTag("f" + getItemId(this.weekKey)) as? FragmentWeekChart
+                              vpWeekIndex?.selectDay(-1)
+                          }
                           onWeekSelected?.invoke(dayIndex, index)
+                          this.dayIndex = dayIndex
+                          this.weekKey = index
                           return
                       }
                    }
                }
             }
         }
-    }
-
-    fun setDayIndex(dayIndex: Int) {
-        weekChart?.selectDay(dayIndex)
     }
 }

@@ -18,6 +18,8 @@ class FragmentChart : Fragment() {
     private var _binding: FragmentChartBinding? = null
     private val binding get() = _binding!!
 
+    var onDaySelected: ((dayIndex: Int) -> Unit)? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,8 +43,21 @@ class FragmentChart : Fragment() {
 
         viewPager.adapter = adapter
         adapter.onWeekSelected = { dayIndex: Int, weekIndex: Int ->
+            //unset currently selected day
+            (viewPager.adapter as DayScoresAdapter).setDayIndex(
+                viewPager.currentItem,
+                -1
+            )
+            //select week
             viewPager.setCurrentItem(weekIndex, true)
-            (viewPager.adapter as DayScoresAdapter).setDayIndex(dayIndex)
+            //select day
+            (viewPager.adapter as DayScoresAdapter).setDayIndex(
+                viewPager.currentItem,
+                dayIndex
+            )
+        }
+        adapter.onDaySelected = { dayIndex ->
+            onDaySelected?.invoke(dayIndex)
         }
     }
 

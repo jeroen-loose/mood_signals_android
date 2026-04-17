@@ -36,8 +36,13 @@ class FragmentHome : Fragment() {
         if (savedInstanceState == null) {
             val chartFragment = FragmentChart()
             val logFragment = FragmentDaysLog()
+
             logFragment.onDayChanged = { dayId ->
                 chartFragment.selectDay(dayId)
+            }
+
+            chartFragment.onDaySelected = { dayId ->
+                logFragment.selectDay(dayId)
             }
 
             childFragmentManager.beginTransaction().apply {
