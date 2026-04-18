@@ -37,4 +37,47 @@
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="#5500ff00"
+        android:padding="16dp"
+        >
+        <LinearLayout
+            android:id="@+id/fabOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fabButtonOpenClose"
+            android:orientation="vertical"
+            >
+        <TextView
+            android:id="@+id/tvEditComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit comment"
+            android:paddingBottom="16px"
+            />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/fabButtonOpenClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/ic_menu_add"
+            app:layout_constraintTop_toBottomOf="@id/fabOptions"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

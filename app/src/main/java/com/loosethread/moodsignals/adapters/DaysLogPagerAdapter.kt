@@ -34,4 +34,8 @@ class DaysLogPagerAdapter(
     fun getPosition(dayId: Int) : Int {
         return days.indexOfFirst { it.id == dayId }
     }
+
+    fun showEditCommentDialog(position: Int) {
+
+    }
 }

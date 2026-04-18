@@ -11,7 +11,7 @@ import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentChartBinding
 import com.loosethread.moodsignals.helpers.DaysLogByWeek
 
-class FragmentChart : Fragment() {
+class FragmentHomeChart : Fragment() {
     lateinit var adapter: DayScoresAdapter
     private lateinit var viewPager: ViewPager2
 

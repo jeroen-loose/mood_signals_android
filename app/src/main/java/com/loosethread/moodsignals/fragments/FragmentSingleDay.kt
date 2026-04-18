@@ -52,27 +52,7 @@ class FragmentSingleDay(): Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.tvComment.text = day.comment
-        val requestKey = "edit_comment_request_$dayId"
-
-        binding.llComment.setOnClickListener {
-            val dialog = EditCommentDialog()
-            dialog.arguments = bundleOf(
-                "comment" to day.comment,
-                "requestKey" to requestKey
-            )
-            dialog.show(parentFragmentManager, "EditCommentFragment")
-        }
-
         binding.tvDate.text = DateManager.formatStringForDisplay(day.date)
-
-        setFragmentResultListener(requestKey) { _, bundle ->
-            val updated = bundle.getBoolean("isUpdated", false)
-            if (updated) {
-                day.comment = bundle.getString("comment")
-                Db.updateComment(dayId, day.comment)
-                binding.tvComment.text = day.comment
-            }
-        }
     }
 
     override fun onResume() {
@@ -85,5 +65,25 @@ class FragmentSingleDay(): Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun showEditCommentDialog() {
+        val requestKey = "edit_comment_request_$dayId"
+        val dialog = EditCommentDialog()
+
+        dialog.arguments = bundleOf(
+            "comment" to day.comment,
+            "requestKey" to requestKey
+        )
+        dialog.show(parentFragmentManager, "EditCommentFragment")
+
+        setFragmentResultListener(requestKey) { _, bundle ->
+            val updated = bundle.getBoolean("isUpdated", false)
+            if (updated) {
+                day.comment = bundle.getString("comment")
+                Db.updateComment(dayId, day.comment)
+                binding.tvComment.text = day.comment
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import com.loosethread.moodsignals.adapters.DaysLogPagerAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentDaysLogBinding
 
-class FragmentDaysLog : Fragment() {
+class FragmentHomeDaysLog : Fragment() {
     var onDayChanged: ((dayId: Int) -> Unit)? = null
     private var _binding: FragmentDaysLogBinding? = null
 
@@ -60,5 +60,15 @@ class FragmentDaysLog : Fragment() {
     fun selectDay(dayId: Int) {
         val dayIndex = (viewPager.adapter as DaysLogPagerAdapter).getPosition(dayId)
         viewPager.setCurrentItem(dayIndex, true)
+    }
+
+    fun showEditCommentDialog() {
+        val currentDayId = days[viewPager.currentItem].id
+        val fragment = (childFragmentManager.findFragmentByTag("f${currentDayId}") as? FragmentSingleDay)
+        fragment?.showEditCommentDialog()
+    }
+
+    fun getDayId(): Int {
+        return days[viewPager.currentItem].id
     }
 }

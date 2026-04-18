@@ -67,10 +67,6 @@ class MainActivity : AppCompatActivity() {
 
         checkNotificationPermission()
         Notification.createNotificationChannel(this)
-
-        binding.fab.setOnClickListener { v ->
-            navController.navigate(R.id.action_HomeFragment_to_fragmentToday)
-        }
     }
 
     override fun onDestroy() {
