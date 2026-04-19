@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         Db.init(applicationContext)
         DateHelper.init("yyyy-MM-dd")
+        Db.generateMissingDays()
         //Db.reset()
         //Db.addCategories()
 

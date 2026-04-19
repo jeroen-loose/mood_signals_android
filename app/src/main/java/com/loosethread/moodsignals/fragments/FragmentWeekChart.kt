@@ -37,8 +37,9 @@ class FragmentWeekChart : Fragment() {
             weekKey = requireArguments().get("index") as Int
 
             val scores = DaysLogByWeek.getWeek(weekKey)
-            for (i in 1..7) {
-                val score = scores!!.get(i)
+        for (i in 1..7) {
+            val score = scores?.get(i)
+            if (score != null) {
                 val tvDayOfWeek = binding.root.findViewById<TextView>(resources.getIdentifier("tvWeekday$i", "id", requireContext().packageName))
                 val chartContainer = binding.root.findViewById<View>(resources.getIdentifier("chartContainer$i", "id", requireContext().packageName))
 
@@ -70,6 +71,7 @@ class FragmentWeekChart : Fragment() {
                     dayClicked(score?.dayId ?: 0)
                 }
             }
+        }
     }
 
     fun selectDay(index: Int) {

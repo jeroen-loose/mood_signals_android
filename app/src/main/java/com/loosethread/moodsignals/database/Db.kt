@@ -717,7 +717,7 @@ object Db {
                "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DayComment.TBL}.${DbC.DayComment.COL_DAY_ID} " +
                "LEFT JOIN ${DbC.DaySignalValue.TBL} " +
                "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID} " +
-               "GROUP BY ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID}, ${DbC.DaySignalValue.COL_SIGNAL_SCORE} " +
+               "GROUP BY ${DbC.Day.TBL}.${BaseColumns._ID}, ${DbC.DaySignalValue.COL_SIGNAL_SCORE} " +
                "ORDER BY " +
                "${DbC.DaySignalValue.COL_DAY_ID} DESC, " +
                "${DbC.DaySignalValue.COL_SIGNAL_SCORE} ASC"
@@ -900,6 +900,32 @@ object Db {
         }
         c.close()
         return id
+    }
+
+    fun generateMissingDays() {
+        val db = helper.readableDatabase
+
+        val query = """
+        WITH RECURSIVE dates(date) AS (
+          SELECT MIN(${DbC.Day.COL_DATE}) FROM ${DbC.Day.TBL}
+          UNION ALL
+          SELECT date(date, '+1 day')
+          FROM dates
+          WHERE date < date('now')
+        )
+        SELECT dates.date as missingDate
+        FROM dates
+        LEFT JOIN ${DbC.Day.TBL} ON dates.date = ${DbC.Day.TBL}.${DbC.Day.COL_DATE}
+        WHERE ${DbC.Day.TBL}.${DbC.Day.COL_DATE} IS NULL
+    """.trimIndent()
+
+        val c = db.rawQuery(query, null)
+        with (c) {
+            while (moveToNext()) {
+                val missingDate = getString(getColumnIndexOrThrow("missingDate"))
+                createDayId(missingDate)
+            }
+        }
     }
 
     fun reset() {
