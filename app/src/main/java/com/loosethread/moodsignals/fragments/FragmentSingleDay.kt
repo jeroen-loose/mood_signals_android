@@ -17,7 +17,7 @@ import com.loosethread.moodsignals.databinding.ItemDayLogBinding
 import com.loosethread.moodsignals.datatypes.Day
 import com.loosethread.moodsignals.datatypes.LogCategory
 import com.loosethread.moodsignals.dialogs.EditCommentDialog
-import com.loosethread.moodsignals.helpers.DateManager
+import com.loosethread.moodsignals.helpers.DateHelper
 
 class FragmentSingleDay(): Fragment() {
     private val dayId: Int by lazy { requireArguments().getInt("dayId") }
@@ -52,7 +52,7 @@ class FragmentSingleDay(): Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.tvComment.text = day.comment
-        binding.tvDate.text = DateManager.formatStringForDisplay(day.date)
+        binding.tvDate.text = DateHelper.formatForDisplay(day.date)
     }
 
     override fun onResume() {

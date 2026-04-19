@@ -27,16 +27,16 @@ object Db {
 
     fun getSignal(id: Int) : Signal {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} as active_choice, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} as category_id, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} as notification_time_id, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as signal_value_description, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} as score FROM" +
-                " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "WHERE ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ?" +
-                "ORDER BY ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+        val query = "SELECT ${DbC.Signal.TBL}.${DbC.Signal.COL_DESCRIPTION} as signal_description, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_ACTIVE_CHOICE} as active_choice, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_CATEGORY_ID} as category_id, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_NOTIFICATION_TIME_ID} as notification_time_id, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_DESCRIPTION} as signal_value_description, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SCORE} as score FROM" +
+                " ${DbC.Signal.TBL} INNER JOIN ${DbC.SignalValue.TBL} " +
+                "ON ${DbC.Signal.TBL}.${BaseColumns._ID} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SIGNAL_ID} " +
+                "WHERE ${DbC.Signal.TBL}.${BaseColumns._ID} = ?" +
+                "ORDER BY ${DbC.SignalValue.COL_SCORE} ASC"
 
         val params = arrayOf(id.toString())
 
@@ -65,16 +65,16 @@ object Db {
     }
     fun getSignalsByCategory(categoryId: Int?): MutableList<Signal> {
         val db = helper.readableDatabase
-        var query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
-                "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
-                " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ? " +
-                "ORDER BY ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+        var query = "SELECT ${DbC.Signal.TBL}.${BaseColumns._ID} AS id, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_DESCRIPTION} AS signal_description, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_ACTIVE_CHOICE} AS active_choice, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_NOTIFICATION_TIME_ID} AS notification_time_id, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_DESCRIPTION} AS signal_value_description, " +
+                "${DbC.SignalValue.COL_SCORE} AS score FROM " +
+                " ${DbC.Signal.TBL} INNER JOIN ${DbC.SignalValue.TBL} " +
+                "ON ${DbC.Signal.TBL}.${BaseColumns._ID} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SIGNAL_ID} " +
+                "WHERE ${DbC.Signal.TBL}.${DbC.Signal.COL_CATEGORY_ID} = ? " +
+                "ORDER BY ${DbC.Signal.TBL}.${BaseColumns._ID} ASC, ${DbC.SignalValue.COL_SCORE} ASC"
 
         var params: Array<String>
         if (categoryId != null) {
@@ -125,7 +125,7 @@ object Db {
         val db = helper.readableDatabase
 
         // TODO: handle archived signals
-        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME}"
+        val query = "SELECT * FROM ${DbC.Signal.TBL}"
         val c = db.rawQuery(query, null)
         val result = c.count
         c.close()
@@ -136,7 +136,7 @@ object Db {
         val db = helper.readableDatabase
 
         val query =
-            "SELECT * FROM ${DbContract.SignalValue.TABLE_NAME} WHERE ${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} = ? LIMIT 0,1"
+            "SELECT * FROM ${DbC.SignalValue.TBL} WHERE ${DbC.SignalValue.COL_SIGNAL_ID} = ? LIMIT 0,1"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         val result = c.count > 0
@@ -149,11 +149,11 @@ object Db {
         val db = helper.writableDatabase
         var query: String
         if (archive) {
-            query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
-                    "SET ${DbContract.Signal.COLUMN_NAME_ARCHIVED} = 1 " +
+            query = "UPDATE ${DbC.Signal.TBL} " +
+                    "SET ${DbC.Signal.COL_ARCHIVED} = 1 " +
                     "WHERE ${BaseColumns._ID} = ?"
         } else {
-            query = "DELETE FROM ${DbContract.Signal.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+            query = "DELETE FROM ${DbC.Signal.TBL} WHERE ${BaseColumns._ID} = ?"
         }
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
@@ -165,7 +165,7 @@ object Db {
     fun getCategories(idToExclude: Int? = null): MutableList<SignalCategory> {
         val db = helper.readableDatabase
         val result = mutableListOf<SignalCategory>()
-        var query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME}"
+        var query = "SELECT * FROM ${DbC.SignalCategory.TBL}"
         if (idToExclude != null) {
             query = query.plus(" WHERE ${BaseColumns._ID} != $idToExclude")
         }
@@ -175,7 +175,7 @@ object Db {
                 result.add(
                     SignalCategory(
                         getInt(getColumnIndexOrThrow(BaseColumns._ID)),
-                        getString(getColumnIndexOrThrow(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION))
+                        getString(getColumnIndexOrThrow(DbC.SignalCategory.COL_DESCRIPTION))
                     )
                 )
             }
@@ -186,7 +186,7 @@ object Db {
 
     fun getCategory(id: Int) : SignalCategory {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.SignalCategory.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val query = "SELECT * FROM ${DbC.SignalCategory.TBL} WHERE ${BaseColumns._ID} = ?"
 
         val params = arrayOf(id.toString())
 
@@ -197,7 +197,7 @@ object Db {
             while (moveToNext()) {
                 category = SignalCategory(
                     getInt(getColumnIndexOrThrow(BaseColumns._ID)),
-                    getString(getColumnIndexOrThrow(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION))
+                    getString(getColumnIndexOrThrow(DbC.SignalCategory.COL_DESCRIPTION))
                 )
             }
 
@@ -210,7 +210,7 @@ object Db {
     fun categoryHasSignals(id: Int) : Boolean {
         val db = helper.readableDatabase
 
-        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME} WHERE ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?"
+        val query = "SELECT * FROM ${DbC.Signal.TBL} WHERE ${DbC.Signal.COL_CATEGORY_ID} = ?"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         val result = c.count > 0
@@ -222,17 +222,17 @@ object Db {
     fun addCategory(description: String) : Int {
         val db = helper.writableDatabase
         val values = ContentValues().apply {
-            put(DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION, description)
+            put(DbC.SignalCategory.COL_DESCRIPTION, description)
         }
 
-        val newCategoryId = db.insert(DbContract.SignalCategory.TABLE_NAME, null, values)
+        val newCategoryId = db.insert(DbC.SignalCategory.TBL, null, values)
         return newCategoryId.toInt()
     }
 
     fun updateCategory(id: Int, description: String) {
         val db = helper.writableDatabase
-        val query = "UPDATE ${DbContract.SignalCategory.TABLE_NAME} " +
-                "SET ${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} = ? " +
+        val query = "UPDATE ${DbC.SignalCategory.TBL} " +
+                "SET ${DbC.SignalCategory.COL_DESCRIPTION} = ? " +
                 "WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(description, id.toString())
         val c = db.rawQuery(query, params)
@@ -243,7 +243,7 @@ object Db {
     fun deleteCategory(id: Int, replacement: Int) {
         val db = helper.writableDatabase
         if (replacement > 0) {
-            val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+            val query = "UPDATE ${DbC.Signal.TBL} " +
                     "SET category_id = ? " +
                     "WHERE category_id = ?"
             val params = arrayOf(replacement.toString(), id.toString())
@@ -251,7 +251,7 @@ object Db {
             c.moveToFirst()
             c.close()
         }
-        val query = "DELETE FROM ${DbContract.SignalCategory.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val query = "DELETE FROM ${DbC.SignalCategory.TBL} WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -260,9 +260,9 @@ object Db {
 
     fun updateSignalCategoryIds(from: Int, to: Int) {
         val db = helper.writableDatabase
-        val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
-                "SET ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ? " +
-                "WHERE ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?"
+        val query = "UPDATE ${DbC.Signal.TBL} " +
+                "SET ${DbC.Signal.COL_CATEGORY_ID} = ? " +
+                "WHERE ${DbC.Signal.COL_CATEGORY_ID} = ?"
         val params = arrayOf(to.toString(), from.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -272,20 +272,20 @@ object Db {
     fun getDayCategories(dayId: Int): MutableList<LogCategory> {
         val db = helper.readableDatabase
 
-        val query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} AS day_id, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} AS signal_score, " +
-                "COUNT(${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE}) AS score_count, " +
-                "${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID} AS category_id, " +
-                "${DbContract.SignalCategory.TABLE_NAME}.${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} AS category_description " +
-                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "LEFT JOIN ${DbContract.Signal.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
-                "LEFT JOIN ${DbContract.SignalCategory.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID} " +
-                "WHERE ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+        val query = "SELECT ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID} AS day_id, " +
+                "${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} AS signal_score, " +
+                "COUNT(${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE}) AS score_count, " +
+                "${DbC.SignalCategory.TBL}.${BaseColumns._ID} AS category_id, " +
+                "${DbC.SignalCategory.TBL}.${DbC.SignalCategory.COL_DESCRIPTION} AS category_description " +
+                "FROM ${DbC.DaySignalValue.TBL} " +
+                "LEFT JOIN ${DbC.Signal.TBL} " +
+                "ON ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} = ${DbC.Signal.TBL}.${BaseColumns._ID} " +
+                "LEFT JOIN ${DbC.SignalCategory.TBL} " +
+                "ON ${DbC.Signal.TBL}.${DbC.Signal.COL_CATEGORY_ID} = ${DbC.SignalCategory.TBL}.${BaseColumns._ID} " +
+                "WHERE ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID} = ? " +
                 "GROUP BY " +
-                "${DbContract.SignalCategory.TABLE_NAME}.${BaseColumns._ID}, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+                "${DbC.SignalCategory.TBL}.${BaseColumns._ID}, " +
+                "${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} " +
                 "ORDER BY category_id ASC, signal_score ASC"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
@@ -325,20 +325,20 @@ object Db {
 
     fun getSignalsByNotificationTime(notificationTimeId: Int? = null): MutableList<Signal> {
         val db = helper.readableDatabase
-        var query = "SELECT ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} AS id, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} AS signal_description, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} AS active_choice, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} AS category_id, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} AS notification_time_id, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} AS signal_value_description, " +
-                "${DbContract.SignalValue.COLUMN_NAME_SCORE} AS score FROM " +
-                " ${DbContract.Signal.TABLE_NAME} INNER JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "WHERE ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_ARCHIVED} = 0 "
+        var query = "SELECT ${DbC.Signal.TBL}.${BaseColumns._ID} AS id, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_DESCRIPTION} AS signal_description, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_ACTIVE_CHOICE} AS active_choice, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_CATEGORY_ID} AS category_id, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_NOTIFICATION_TIME_ID} AS notification_time_id, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_DESCRIPTION} AS signal_value_description, " +
+                "${DbC.SignalValue.COL_SCORE} AS score FROM " +
+                " ${DbC.Signal.TBL} INNER JOIN ${DbC.SignalValue.TBL} " +
+                "ON ${DbC.Signal.TBL}.${BaseColumns._ID} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SIGNAL_ID} " +
+                "WHERE ${DbC.Signal.TBL}.${DbC.Signal.COL_ARCHIVED} = 0 "
         if (notificationTimeId != null) {
-            query += "AND ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? "
+            query += "AND ${DbC.Signal.TBL}.${DbC.Signal.COL_NOTIFICATION_TIME_ID} = ? "
         }
-        query += "ORDER BY category_id ASC, ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} ASC, ${DbContract.SignalValue.COLUMN_NAME_SCORE} ASC"
+        query += "ORDER BY category_id ASC, ${DbC.Signal.TBL}.${BaseColumns._ID} ASC, ${DbC.SignalValue.COL_SCORE} ASC"
 
         var params: Array<String>? = null
         if (notificationTimeId != null) {
@@ -386,34 +386,34 @@ object Db {
     fun addSignal(signal: Signal) {
         val db = helper.writableDatabase
         val values = ContentValues().apply {
-            put(DbContract.Signal.COLUMN_NAME_DESCRIPTION, signal.description)
-            put(DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE, signal.activeChoice)
-            put(DbContract.Signal.COLUMN_NAME_CATEGORY_ID, signal.categoryId)
-            put(DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID, signal.notificationTimeId)
-            put(DbContract.Signal.COLUMN_NAME_ARCHIVED, 0)
+            put(DbC.Signal.COL_DESCRIPTION, signal.description)
+            put(DbC.Signal.COL_ACTIVE_CHOICE, signal.activeChoice)
+            put(DbC.Signal.COL_CATEGORY_ID, signal.categoryId)
+            put(DbC.Signal.COL_NOTIFICATION_TIME_ID, signal.notificationTimeId)
+            put(DbC.Signal.COL_ARCHIVED, 0)
         }
 
-        val newSignalId = db.insert(DbContract.Signal.TABLE_NAME, null, values)
+        val newSignalId = db.insert(DbC.Signal.TBL, null, values)
 
         signal.scores.forEach { score ->
             val values = ContentValues().apply {
-                put(DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID, newSignalId)
-                put(DbContract.SignalValue.COLUMN_NAME_SCORE, score.score)
-                put(DbContract.SignalValue.COLUMN_NAME_DESCRIPTION, score.description)
+                put(DbC.SignalValue.COL_SIGNAL_ID, newSignalId)
+                put(DbC.SignalValue.COL_SCORE, score.score)
+                put(DbC.SignalValue.COL_DESCRIPTION, score.description)
             }
 
-            db.insert(DbContract.SignalValue.TABLE_NAME, null, values)
+            db.insert(DbC.SignalValue.TBL, null, values)
         }
     }
 
     fun updateSignal(signal: Signal) {
         val db = helper.writableDatabase
 
-        val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
-                "SET ${DbContract.Signal.COLUMN_NAME_DESCRIPTION} = ?, " +
-                "${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} = ?, " +
-                "${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} = ?, " +
-                "${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ? " +
+        val query = "UPDATE ${DbC.Signal.TBL} " +
+                "SET ${DbC.Signal.COL_DESCRIPTION} = ?, " +
+                "${DbC.Signal.COL_ACTIVE_CHOICE} = ?, " +
+                "${DbC.Signal.COL_CATEGORY_ID} = ?, " +
+                "${DbC.Signal.COL_NOTIFICATION_TIME_ID} = ? " +
                 "WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(
             signal.description.toString(),
@@ -427,10 +427,10 @@ object Db {
         c.close()
 
         signal.scores.forEach { signalScore ->
-            val query = "UPDATE ${DbContract.SignalValue.TABLE_NAME} " +
-                    "SET ${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} = ? " +
-                    "WHERE ${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} = ? " +
-                    "AND ${DbContract.SignalValue.COLUMN_NAME_SCORE} = ?"
+            val query = "UPDATE ${DbC.SignalValue.TBL} " +
+                    "SET ${DbC.SignalValue.COL_DESCRIPTION} = ? " +
+                    "WHERE ${DbC.SignalValue.COL_SIGNAL_ID} = ? " +
+                    "AND ${DbC.SignalValue.COL_SCORE} = ?"
             val params = arrayOf(signalScore.description.toString(), signal.id.toString(), signalScore.score.toString())
             c = db.rawQuery(query, params)
             c.moveToFirst()
@@ -443,11 +443,11 @@ object Db {
     fun getNotificationTime(id: Int) : NotificationTime {
         val db = helper.readableDatabase
         val query = "SELECT " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} as title, " +
-                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} as question, " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME} as time " +
+                "${DbC.NotificationTime.COL_TITLE} as title, " +
+                "${DbC.NotificationTime.COL_QUESTION} as question, " +
+                "${DbC.NotificationTime.COL_TIME} as time " +
                 "FROM " +
-                "${DbContract.NotificationTime.TABLE_NAME} " +
+                "${DbC.NotificationTime.TBL} " +
                 "WHERE ${BaseColumns._ID} = ?"
 
         val params = arrayOf(id.toString())
@@ -477,7 +477,7 @@ object Db {
 
     fun getNotificationTimes(idToExclude: Int? = null): MutableList<NotificationTime> {
         val db = helper.readableDatabase
-        var query = "SELECT * FROM ${DbContract.NotificationTime.TABLE_NAME}"
+        var query = "SELECT * FROM ${DbC.NotificationTime.TBL}"
         if (idToExclude != null) {
             query = query.plus(" WHERE ${BaseColumns._ID} != $idToExclude")
         }
@@ -489,9 +489,9 @@ object Db {
             while(moveToNext()) {
                 val notificationTime = NotificationTime(
                     getInt(getColumnIndexOrThrow(BaseColumns._ID)),
-                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_TITLE)),
-                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_QUESTION)),
-                    getString(getColumnIndexOrThrow(DbContract.NotificationTime.COLUMN_NAME_TIME))
+                    getString(getColumnIndexOrThrow(DbC.NotificationTime.COL_TITLE)),
+                    getString(getColumnIndexOrThrow(DbC.NotificationTime.COL_QUESTION)),
+                    getString(getColumnIndexOrThrow(DbC.NotificationTime.COL_TIME))
                 )
 
                 result.add(notificationTime)
@@ -505,11 +505,11 @@ object Db {
 
     fun addNotificationTime(notificationTime: NotificationTime) : Int {
         val db = helper.writableDatabase
-        val query = "INSERT INTO ${DbContract.NotificationTime.TABLE_NAME}" +
+        val query = "INSERT INTO ${DbC.NotificationTime.TBL}" +
                 "(" +
-                "${DbContract.NotificationTime.COLUMN_NAME_TITLE}," +
-                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION}," +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
+                "${DbC.NotificationTime.COL_TITLE}," +
+                "${DbC.NotificationTime.COL_QUESTION}," +
+                "${DbC.NotificationTime.COL_TIME}" +
                 ") VALUES (" +
                 "'${notificationTime.title}'," +
                 "'${notificationTime.question}'," +
@@ -524,11 +524,11 @@ object Db {
 
     fun updateNotificationTime(notificationTime: NotificationTime) {
         val db = helper.writableDatabase
-        val query = "UPDATE ${DbContract.NotificationTime.TABLE_NAME} " +
+        val query = "UPDATE ${DbC.NotificationTime.TBL} " +
                 "SET " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} = '${notificationTime.title}', " +
-                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} = '${notificationTime.question}', " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME} = '${notificationTime.time}' " +
+                "${DbC.NotificationTime.COL_TITLE} = '${notificationTime.title}', " +
+                "${DbC.NotificationTime.COL_QUESTION} = '${notificationTime.question}', " +
+                "${DbC.NotificationTime.COL_TIME} = '${notificationTime.time}' " +
                 "WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(notificationTime.id.toString())
         val c = db.rawQuery(query, params)
@@ -539,7 +539,7 @@ object Db {
     fun notificationTimeHasSignals(id: Int) : Boolean {
         val db = helper.readableDatabase
 
-        val query = "SELECT * FROM ${DbContract.Signal.TABLE_NAME} WHERE ${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} = ?"
+        val query = "SELECT * FROM ${DbC.Signal.TBL} WHERE ${DbC.Signal.COL_NOTIFICATION_TIME_ID} = ?"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         val result = c.count > 0
@@ -552,7 +552,7 @@ object Db {
         val db = helper.writableDatabase
         replacement?.let {
             if (it > 0) {
-                val query = "UPDATE ${DbContract.Signal.TABLE_NAME} " +
+                val query = "UPDATE ${DbC.Signal.TBL} " +
                         "SET notification_time_id = ? " +
                         "WHERE notification_time_id = ?"
                 val params = arrayOf(replacement.toString(), id.toString())
@@ -561,7 +561,7 @@ object Db {
                 c.close()
             }
         }
-        val query = "DELETE FROM ${DbContract.NotificationTime.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val query = "DELETE FROM ${DbC.NotificationTime.TBL} WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -570,11 +570,11 @@ object Db {
 
     fun insertDaySignalValue(dayId: Int, signalId: Int, scoreId: Int) {
         val db = helper.writableDatabase
-        val query = "INSERT OR REPLACE INTO ${DbContract.DaySignalValue.TABLE_NAME} " +
+        val query = "INSERT OR REPLACE INTO ${DbC.DaySignalValue.TBL} " +
                 "(" +
-                "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID}, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+                "${DbC.DaySignalValue.COL_DAY_ID}, " +
+                "${DbC.DaySignalValue.COL_SIGNAL_ID}, " +
+                "${DbC.DaySignalValue.COL_SIGNAL_SCORE} " +
                 ") VALUES (" +
                 "$dayId, " +
                 "$signalId, " +
@@ -587,9 +587,9 @@ object Db {
 
     fun removeDaySignalValue(dayId: Int, signalId: Int) {
         val db = helper.writableDatabase
-        val query = "DELETE FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
-                "AND ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ?"
+        val query = "DELETE FROM ${DbC.DaySignalValue.TBL} " +
+                "WHERE ${DbC.DaySignalValue.COL_DAY_ID} = ? " +
+                "AND ${DbC.DaySignalValue.COL_SIGNAL_ID} = ?"
         val params = arrayOf(dayId.toString(), signalId.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -598,17 +598,17 @@ object Db {
 
     fun getDaySignalValues(dayId: Int) : MutableList<DaySignalValue> {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as score_description " +
-                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "JOIN ${DbContract.Signal.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
-                "JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "AND ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
+        val query = "SELECT ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} as signal_id, " +
+                "${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} as score, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_DESCRIPTION} as signal_description, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_DESCRIPTION} as score_description " +
+                "FROM ${DbC.DaySignalValue.TBL} " +
+                "JOIN ${DbC.Signal.TBL} " +
+                "ON ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} = ${DbC.Signal.TBL}.${BaseColumns._ID} " +
+                "JOIN ${DbC.SignalValue.TBL} " +
+                "ON ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SIGNAL_ID} " +
+                "AND ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SCORE} " +
+                "WHERE ${DbC.DaySignalValue.COL_DAY_ID} = ? " +
                 "ORDER BY score DESC, signal_id ASC"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
@@ -618,8 +618,8 @@ object Db {
                result.add(
                    DaySignalValue(
                        //getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
-                       getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
-                       getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE)),
+                       getInt(getColumnIndexOrThrow(DbC.DaySignalValue.COL_SIGNAL_ID)),
+                       getInt(getColumnIndexOrThrow(DbC.DaySignalValue.COL_SIGNAL_SCORE)),
                        getString(getColumnIndexOrThrow("signal_description")),
                        getString(getColumnIndexOrThrow("score_description"))
                    )
@@ -632,18 +632,18 @@ object Db {
 
     fun getDaySignalValuesByCategory(dayId: Int, categoryId: Int?) : MutableList<DaySignalValue> {
         val db = helper.readableDatabase
-        var query = "SELECT ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} as signal_id, " +
-                "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as score, " +
-                "${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_DESCRIPTION} as signal_description, " +
-                "${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} as score_description " +
-                "FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "JOIN ${DbContract.Signal.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.Signal.TABLE_NAME}.${BaseColumns._ID} " +
-                "JOIN ${DbContract.SignalValue.TABLE_NAME} " +
-                "ON ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} " +
-                "AND ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} = ${DbContract.SignalValue.TABLE_NAME}.${DbContract.SignalValue.COLUMN_NAME_SCORE} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
-                "AND ${DbContract.Signal.TABLE_NAME}.${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} "
+        var query = "SELECT ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} as signal_id, " +
+                "${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} as score, " +
+                "${DbC.Signal.TBL}.${DbC.Signal.COL_DESCRIPTION} as signal_description, " +
+                "${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_DESCRIPTION} as score_description " +
+                "FROM ${DbC.DaySignalValue.TBL} " +
+                "JOIN ${DbC.Signal.TBL} " +
+                "ON ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} = ${DbC.Signal.TBL}.${BaseColumns._ID} " +
+                "JOIN ${DbC.SignalValue.TBL} " +
+                "ON ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_ID} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SIGNAL_ID} " +
+                "AND ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} = ${DbC.SignalValue.TBL}.${DbC.SignalValue.COL_SCORE} " +
+                "WHERE ${DbC.DaySignalValue.COL_DAY_ID} = ? " +
+                "AND ${DbC.Signal.TBL}.${DbC.Signal.COL_CATEGORY_ID} "
 
                 var params: Array<String>
                 if (categoryId == 0) {
@@ -662,8 +662,8 @@ object Db {
                 result.add(
                     DaySignalValue(
                         //getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_DAY_ID)),
-                        getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID)),
-                        getInt(getColumnIndexOrThrow(DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE)),
+                        getInt(getColumnIndexOrThrow(DbC.DaySignalValue.COL_SIGNAL_ID)),
+                        getInt(getColumnIndexOrThrow(DbC.DaySignalValue.COL_SIGNAL_SCORE)),
                         getString(getColumnIndexOrThrow("signal_description")),
                         getString(getColumnIndexOrThrow("score_description"))
                     )
@@ -676,9 +676,9 @@ object Db {
 
     fun getDaySignalValue(dayId: Int, signalId: Int) {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ? " +
-                "AND ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} = ?"
+        val query = "SELECT * FROM ${DbC.DaySignalValue.TBL} " +
+                "WHERE ${DbC.DaySignalValue.COL_DAY_ID} = ? " +
+                "AND ${DbC.DaySignalValue.COL_SIGNAL_ID} = ?"
         val params = arrayOf(dayId.toString(), signalId.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -687,8 +687,8 @@ object Db {
 
     fun getDayId(date: String) : Int {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.Day.TABLE_NAME} " +
-                "WHERE ${DbContract.Day.COLUMN_NAME_DATE} = ? " +
+        val query = "SELECT * FROM ${DbC.Day.TBL} " +
+                "WHERE ${DbC.Day.COL_DATE} = ? " +
                 "ORDER BY ${BaseColumns._ID} DESC " +
                 "LIMIT 1"
         val params = arrayOf(date)
@@ -707,20 +707,20 @@ object Db {
 
     fun getDayScores() : MutableList<LogDay> {
        val db = helper.readableDatabase
-       val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
-               "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
-               "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment, " +
-               "${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} as signal_score, " +
+       val query = "SELECT ${DbC.Day.TBL}.${BaseColumns._ID} as day_id, " +
+               "${DbC.Day.TBL}.${DbC.Day.COL_DATE} as date, " +
+               "${DbC.DayComment.TBL}.${DbC.DayComment.COL_COMMENT} as comment, " +
+               "${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_SIGNAL_SCORE} as signal_score, " +
                "COUNT(*) as count " +
-               "FROM ${DbContract.Day.TABLE_NAME} " +
-               "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
-               "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
-               "LEFT JOIN ${DbContract.DaySignalValue.TABLE_NAME} " +
-               "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} " +
-               "GROUP BY ${DbContract.DaySignalValue.TABLE_NAME}.${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, ${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} " +
+               "FROM ${DbC.Day.TBL} " +
+               "LEFT JOIN ${DbC.DayComment.TBL} " +
+               "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DayComment.TBL}.${DbC.DayComment.COL_DAY_ID} " +
+               "LEFT JOIN ${DbC.DaySignalValue.TBL} " +
+               "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID} " +
+               "GROUP BY ${DbC.DaySignalValue.TBL}.${DbC.DaySignalValue.COL_DAY_ID}, ${DbC.DaySignalValue.COL_SIGNAL_SCORE} " +
                "ORDER BY " +
-               "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} DESC, " +
-               "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} ASC"
+               "${DbC.DaySignalValue.COL_DAY_ID} DESC, " +
+               "${DbC.DaySignalValue.COL_SIGNAL_SCORE} ASC"
        val c = db.rawQuery(query, null)
        var result = mutableListOf<LogDay>()
         var day = LogDay(-1, "", mutableMapOf())
@@ -752,9 +752,9 @@ object Db {
 
     fun createDayId(date: String) : Int {
         val db = helper.writableDatabase
-        val query = "INSERT INTO ${DbContract.Day.TABLE_NAME} " +
+        val query = "INSERT INTO ${DbC.Day.TBL} " +
                 "(" +
-                "${DbContract.Day.COLUMN_NAME_DATE}" +
+                "${DbC.Day.COL_DATE}" +
                 ") VALUES (" +
                 "?" +
                 ")"
@@ -767,8 +767,8 @@ object Db {
 
     fun dayIsEmpty(dayId: Int) : Boolean {
         val db = helper.readableDatabase
-        val query = "SELECT * FROM ${DbContract.DaySignalValue.TABLE_NAME} " +
-                "WHERE ${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} = ?"
+        val query = "SELECT * FROM ${DbC.DaySignalValue.TBL} " +
+                "WHERE ${DbC.DaySignalValue.COL_DAY_ID} = ?"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
         val result = c.count == 0
@@ -778,7 +778,7 @@ object Db {
 
     fun removeDay(dayId: Int) {
         val db = helper.writableDatabase
-        val query = "DELETE FROM ${DbContract.Day.TABLE_NAME} WHERE ${BaseColumns._ID} = ?"
+        val query = "DELETE FROM ${DbC.Day.TBL} WHERE ${BaseColumns._ID} = ?"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
         c.moveToFirst()
@@ -791,22 +791,22 @@ object Db {
         var params: Array<String>
 
         if (comment.isNullOrEmpty()) {
-            query = "DELETE FROM ${DbContract.DayComment.TABLE_NAME} " +
-                    "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+            query = "DELETE FROM ${DbC.DayComment.TBL} " +
+                    "WHERE ${DbC.DayComment.COL_DAY_ID} = ?"
             params = arrayOf(dayId.toString())
         } else {
             val existingComment = getComment(dayId)
             if (existingComment.isNullOrEmpty()) {
-                query = "INSERT INTO ${DbContract.DayComment.TABLE_NAME} " +
+                query = "INSERT INTO ${DbC.DayComment.TBL} " +
                         "(" +
-                        "${DbContract.DayComment.COLUMN_NAME_DAY_ID}, " +
-                        "${DbContract.DayComment.COLUMN_NAME_COMMENT}" +
+                        "${DbC.DayComment.COL_DAY_ID}, " +
+                        "${DbC.DayComment.COL_COMMENT}" +
                         ") VALUES (?, ?)"
                 params = arrayOf(dayId.toString(), comment)
             } else {
-                query = "UPDATE ${DbContract.DayComment.TABLE_NAME} " +
-                        "SET ${DbContract.DayComment.COLUMN_NAME_COMMENT} = ? " +
-                        "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+                query = "UPDATE ${DbC.DayComment.TBL} " +
+                        "SET ${DbC.DayComment.COL_COMMENT} = ? " +
+                        "WHERE ${DbC.DayComment.COL_DAY_ID} = ?"
                 params = arrayOf(comment, dayId.toString())
             }
         }
@@ -817,14 +817,14 @@ object Db {
 
     fun getComment(dayId: Int) : String {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.DayComment.COLUMN_NAME_COMMENT} FROM ${DbContract.DayComment.TABLE_NAME} " +
-                "WHERE ${DbContract.DayComment.COLUMN_NAME_DAY_ID} = ?"
+        val query = "SELECT ${DbC.DayComment.COL_COMMENT} FROM ${DbC.DayComment.TBL} " +
+                "WHERE ${DbC.DayComment.COL_DAY_ID} = ?"
         val params = arrayOf(dayId.toString())
         val c = db.rawQuery(query, params)
         var result = ""
         with(c) {
             if(moveToFirst()) {
-                result = getString(c.getColumnIndexOrThrow(DbContract.DayComment.COLUMN_NAME_COMMENT))
+                result = getString(c.getColumnIndexOrThrow(DbC.DayComment.COL_COMMENT))
             }
             close()
         }
@@ -834,13 +834,13 @@ object Db {
 
     fun getDays() : MutableList<Day> {
         val db = helper.readableDatabase
-        val query = "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
-                "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
-                "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
-                "FROM ${DbContract.Day.TABLE_NAME} " +
-                "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
-                "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
-                "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC"
+        val query = "SELECT ${DbC.Day.TBL}.${BaseColumns._ID} as day_id, " +
+                "${DbC.Day.TBL}.${DbC.Day.COL_DATE} as date, " +
+                "${DbC.DayComment.TBL}.${DbC.DayComment.COL_COMMENT} as comment " +
+                "FROM ${DbC.Day.TBL} " +
+                "LEFT JOIN ${DbC.DayComment.TBL} " +
+                "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DayComment.TBL}.${DbC.DayComment.COL_DAY_ID} " +
+                "ORDER BY ${DbC.Day.COL_DATE} DESC"
         val c = db.rawQuery(query, null)
         var result = mutableListOf<Day>()
 
@@ -864,14 +864,14 @@ object Db {
     fun getDay(id: Int) : Day {
         val db = helper.readableDatabase
         val query =
-            "SELECT ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} as day_id, " +
-                    "${DbContract.Day.TABLE_NAME}.${DbContract.Day.COLUMN_NAME_DATE} as date, " +
-                    "${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_COMMENT} as comment " +
-                    "FROM ${DbContract.Day.TABLE_NAME} " +
-                    "LEFT JOIN ${DbContract.DayComment.TABLE_NAME} " +
-                    "ON ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ${DbContract.DayComment.TABLE_NAME}.${DbContract.DayComment.COLUMN_NAME_DAY_ID} " +
-                    "WHERE ${DbContract.Day.TABLE_NAME}.${BaseColumns._ID} = ?"
-        "ORDER BY ${DbContract.Day.COLUMN_NAME_DATE} DESC"
+            "SELECT ${DbC.Day.TBL}.${BaseColumns._ID} as day_id, " +
+                    "${DbC.Day.TBL}.${DbC.Day.COL_DATE} as date, " +
+                    "${DbC.DayComment.TBL}.${DbC.DayComment.COL_COMMENT} as comment " +
+                    "FROM ${DbC.Day.TBL} " +
+                    "LEFT JOIN ${DbC.DayComment.TBL} " +
+                    "ON ${DbC.Day.TBL}.${BaseColumns._ID} = ${DbC.DayComment.TBL}.${DbC.DayComment.COL_DAY_ID} " +
+                    "WHERE ${DbC.Day.TBL}.${BaseColumns._ID} = ?"
+        "ORDER BY ${DbC.Day.COL_DATE} DESC"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         var result = Day(-1, "", "")

@@ -20,7 +20,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.navigation.ui.onNavDestinationSelected
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ActivityMainBinding
-import com.loosethread.moodsignals.helpers.DateManager
+import com.loosethread.moodsignals.helpers.DateHelper
 import com.loosethread.moodsignals.helpers.Notification
 
 class MainActivity : AppCompatActivity() {
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         Db.init(applicationContext)
-        DateManager.init("yyyy-MM-dd")
+        DateHelper.init("yyyy-MM-dd")
         //Db.reset()
         //Db.addCategories()
 

@@ -7,66 +7,66 @@ import android.provider.BaseColumns
 
 class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     private val SQL_CREATE_ENTRIES = arrayOf(
-        "CREATE TABLE ${DbContract.Signal.TABLE_NAME} (" +
+        "CREATE TABLE ${DbC.Signal.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.Signal.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL," +
-                "${DbContract.Signal.COLUMN_NAME_ARCHIVED} BOOLEAN NOT NULL DEFAULT FALSE," +
-                "${DbContract.Signal.COLUMN_NAME_ACTIVE_CHOICE} BOOLEAN NOT NULL DEFAULT FALSE," +
-                "${DbContract.Signal.COLUMN_NAME_NOTIFICATION_TIME_ID} INTEGER" +
-                "${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} INTEGER" +
+                "${DbC.Signal.COL_DESCRIPTION} TEXT NOT NULL," +
+                "${DbC.Signal.COL_ARCHIVED} BOOLEAN NOT NULL DEFAULT FALSE," +
+                "${DbC.Signal.COL_ACTIVE_CHOICE} BOOLEAN NOT NULL DEFAULT FALSE," +
+                "${DbC.Signal.COL_NOTIFICATION_TIME_ID} INTEGER" +
+                "${DbC.Signal.COL_CATEGORY_ID} INTEGER" +
                 ")",
 
-        "CREATE TABLE ${DbContract.SignalCategory.TABLE_NAME} (" +
+        "CREATE TABLE ${DbC.SignalCategory.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL" +
+                "${DbC.SignalCategory.COL_DESCRIPTION} TEXT NOT NULL" +
                 ")",
 
-        "CREATE TABLE ${DbContract.SignalValue.TABLE_NAME} (" +
-                "${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID} INTEGER NOT NULL, " +
-                "${DbContract.SignalValue.COLUMN_NAME_SCORE} INTEGER NOT NULL, " +
-                "${DbContract.SignalValue.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL, " +
-                "PRIMARY KEY (${DbContract.SignalValue.COLUMN_NAME_SIGNAL_ID}, " +
-                "${DbContract.SignalValue.COLUMN_NAME_SCORE}" +
+        "CREATE TABLE ${DbC.SignalValue.TBL} (" +
+                "${DbC.SignalValue.COL_SIGNAL_ID} INTEGER NOT NULL, " +
+                "${DbC.SignalValue.COL_SCORE} INTEGER NOT NULL, " +
+                "${DbC.SignalValue.COL_DESCRIPTION} TEXT NOT NULL, " +
+                "PRIMARY KEY (${DbC.SignalValue.COL_SIGNAL_ID}, " +
+                "${DbC.SignalValue.COL_SCORE}" +
                 ")" +
                 ")",
 
-        "CREATE TABLE ${DbContract.Day.TABLE_NAME} (" +
+        "CREATE TABLE ${DbC.Day.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.Day.COLUMN_NAME_DATE} TEXT NOT NULL" +
+                "${DbC.Day.COL_DATE} TEXT NOT NULL" +
                 ")",
 
-        "CREATE TABLE ${DbContract.DaySignalValue.TABLE_NAME} (" +
-                "${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID} INTEGER NOT NULL, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID} INTEGER NOT NULL, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_SCORE} INTEGER NOT NULL, " +
-                "PRIMARY KEY (${DbContract.DaySignalValue.COLUMN_NAME_DAY_ID}, " +
-                "${DbContract.DaySignalValue.COLUMN_NAME_SIGNAL_ID}" +
+        "CREATE TABLE ${DbC.DaySignalValue.TBL} (" +
+                "${DbC.DaySignalValue.COL_DAY_ID} INTEGER NOT NULL, " +
+                "${DbC.DaySignalValue.COL_SIGNAL_ID} INTEGER NOT NULL, " +
+                "${DbC.DaySignalValue.COL_SIGNAL_SCORE} INTEGER NOT NULL, " +
+                "PRIMARY KEY (${DbC.DaySignalValue.COL_DAY_ID}, " +
+                "${DbC.DaySignalValue.COL_SIGNAL_ID}" +
                 ")" +
                 ")",
 
-        "CREATE TABLE ${DbContract.DayComment.TABLE_NAME} (" +
+        "CREATE TABLE ${DbC.DayComment.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.DayComment.COLUMN_NAME_DAY_ID} INTEGER NOT NULL," +
-                "${DbContract.DayComment.COLUMN_NAME_COMMENT} TEXT NOT NULL" +
+                "${DbC.DayComment.COL_DAY_ID} INTEGER NOT NULL," +
+                "${DbC.DayComment.COL_COMMENT} TEXT NOT NULL" +
                 ")",
 
-        "CREATE TABLE ${DbContract.NotificationTime.TABLE_NAME} (" +
+        "CREATE TABLE ${DbC.NotificationTime.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.NotificationTime.COLUMN_NAME_TITLE} TEXT NOT NULL," +
-                "${DbContract.NotificationTime.COLUMN_NAME_QUESTION} TEXT NOT NULL," +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME} TEXT NOT NULL" +
+                "${DbC.NotificationTime.COL_TITLE} TEXT NOT NULL," +
+                "${DbC.NotificationTime.COL_QUESTION} TEXT NOT NULL," +
+                "${DbC.NotificationTime.COL_TIME} TEXT NOT NULL" +
                 ")",
 
-        "INSERT INTO ${DbContract.NotificationTime.TABLE_NAME} (" +
-                "${DbContract.NotificationTime.COLUMN_NAME_TITLE}," +
-               "${DbContract.NotificationTime.COLUMN_NAME_QUESTION}, " +
-                "${DbContract.NotificationTime.COLUMN_NAME_TIME}" +
+        "INSERT INTO ${DbC.NotificationTime.TBL} (" +
+                "${DbC.NotificationTime.COL_TITLE}," +
+               "${DbC.NotificationTime.COL_QUESTION}, " +
+                "${DbC.NotificationTime.COL_TIME}" +
                 ") VALUES " +
                 "('Morning', 'How did you sleep?', '07:30'), " +
                 "('Evening', 'How was your day?', '21:00')",
 
-        "INSERT INTO ${DbContract.SignalCategory.TABLE_NAME} (" +
-                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION}" +
+        "INSERT INTO ${DbC.SignalCategory.TBL} (" +
+                "${DbC.SignalCategory.COL_DESCRIPTION}" +
                 ") VALUES " +
                 "('Uncategorized'), " +
                 "('Energy'), " +
@@ -81,15 +81,15 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     )
 
     private val SQL_ENABLE_CATEGORIES_ENTRIES = arrayOf(
-        "CREATE TABLE IF NOT EXISTS ${DbContract.SignalCategory.TABLE_NAME} (" +
+        "CREATE TABLE IF NOT EXISTS ${DbC.SignalCategory.TBL} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION} TEXT NOT NULL" +
+                "${DbC.SignalCategory.COL_DESCRIPTION} TEXT NOT NULL" +
                 ")",
 
-        "ALTER TABLE ${DbContract.Signal.TABLE_NAME} ADD ${DbContract.Signal.COLUMN_NAME_CATEGORY_ID} INTEGER",
+        "ALTER TABLE ${DbC.Signal.TBL} ADD ${DbC.Signal.COL_CATEGORY_ID} INTEGER",
 
-        "INSERT INTO ${DbContract.SignalCategory.TABLE_NAME} (" +
-                "${DbContract.SignalCategory.COLUMN_NAME_DESCRIPTION}" +
+        "INSERT INTO ${DbC.SignalCategory.TBL} (" +
+                "${DbC.SignalCategory.COL_DESCRIPTION}" +
                 ") VALUES " +
                 "('Social'), " +
                 "('Tasks'), " +
@@ -100,12 +100,12 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     )
 
     private val SQL_DELETE_ENTRIES = arrayOf(
-            "DROP TABLE IF EXISTS ${DbContract.Signal.TABLE_NAME}",
-            "DROP TABLE IF EXISTS ${DbContract.SignalValue.TABLE_NAME}",
-            "DROP TABLE IF EXISTS ${DbContract.Day.TABLE_NAME}",
-            "DROP TABLE IF EXISTS ${DbContract.DaySignalValue.TABLE_NAME}",
-            "DROP TABLE IF EXISTS ${DbContract.DayComment.TABLE_NAME}",
-            "DROP TABLE IF EXISTS ${DbContract.NotificationTime.TABLE_NAME}"
+            "DROP TABLE IF EXISTS ${DbC.Signal.TBL}",
+            "DROP TABLE IF EXISTS ${DbC.SignalValue.TBL}",
+            "DROP TABLE IF EXISTS ${DbC.Day.TBL}",
+            "DROP TABLE IF EXISTS ${DbC.DaySignalValue.TBL}",
+            "DROP TABLE IF EXISTS ${DbC.DayComment.TBL}",
+            "DROP TABLE IF EXISTS ${DbC.NotificationTime.TBL}"
     )
 
     override fun onCreate(db: SQLiteDatabase) {
