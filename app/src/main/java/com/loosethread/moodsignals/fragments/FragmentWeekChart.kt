@@ -1,6 +1,5 @@
 package com.loosethread.moodsignals.fragments
 
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.databinding.FragmentWeekChartBinding
-import com.loosethread.moodsignals.datatypes.LogDay
 import com.loosethread.moodsignals.helpers.DaysLogByWeek
 import com.loosethread.moodsignals.views.Chart
 
@@ -57,9 +55,9 @@ class FragmentWeekChart : Fragment() {
                 }
 
                 val background = Chart(requireContext(), intArrayOf(
-                    score?.score_count[1] ?: 0,
-                    score?.score_count[2] ?: 0,
-                    score?.score_count[3] ?: 0
+                    score?.scoreCount[1] ?: 0,
+                    score?.scoreCount[2] ?: 0,
+                    score?.scoreCount[3] ?: 0
                 ))
                 background.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM)
                 chartContainer.background = background

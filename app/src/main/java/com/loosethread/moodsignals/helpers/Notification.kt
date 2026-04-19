@@ -50,17 +50,8 @@ class Notification : BroadcastReceiver() {
                         Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    // TODO: Consider calling
-                    // ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array&lt;out String&gt;,
-                    //                                        grantResults: IntArray)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-
                     return@with
                 }
-                // notificationId is a unique int for each notification that you must define.
                 notify(intent.getIntExtra("id", 0), builder.build())
             }
         }

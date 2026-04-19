@@ -743,7 +743,7 @@ object Db {
                     getInt(getColumnIndexOrThrow("signal_score")) to getInt(getColumnIndexOrThrow("count"))
                 )
 
-                result[lastIndex!!].score_count = result[lastIndex!!].score_count.plus(score_count)
+                result[lastIndex!!].scoreCount = result[lastIndex!!].scoreCount.plus(score_count)
             }
         }
        c.close()

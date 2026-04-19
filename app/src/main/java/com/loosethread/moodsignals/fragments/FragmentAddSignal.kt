@@ -15,11 +15,7 @@ import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
 import com.loosethread.moodsignals.datatypes.SignalCategory
 import com.loosethread.moodsignals.datatypes.SignalScore
-import java.util.Locale
 
-/**
- * A simple [Fragment] subclass as the second destination in the navigation.
- */
 class FragmentAddSignal : Fragment() {
 
     private var _binding: FragmentAddSignalBinding? = null

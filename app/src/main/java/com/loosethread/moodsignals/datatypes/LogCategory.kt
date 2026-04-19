@@ -10,6 +10,6 @@ class LogCategory (
     var score_count: Map<Int, Int> = mapOf()
 ) {
     override fun toString(): String {
-        return description.toString()
+        return description
     }
 }
