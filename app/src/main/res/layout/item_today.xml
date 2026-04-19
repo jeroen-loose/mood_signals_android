@@ -1,30 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
+    android:orientation="vertical"
     android:padding="8dp"
+    android:gravity="center_vertical"
     >
 
     <TextView
         android:id="@+id/tvSignalName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         />
 
     <Button
         android:id="@+id/btnScoreGreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSignalName"
         android:backgroundTint="@color/green"
         android:textColor="@color/white"
         />
@@ -33,9 +25,6 @@
         android:id="@+id/btnScoreOrange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnScoreGreen"
         android:backgroundTint="@color/orange"
         android:textColor="@color/white"
         />
@@ -44,9 +33,6 @@
         android:id="@+id/btnScoreRed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnScoreOrange"
         android:backgroundTint="@color/red"
         android:textColor="@color/white"
         />
@@ -55,12 +41,9 @@
         android:id="@+id/btnScoreNone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnScoreRed"
         android:backgroundTint="@color/background_gray"
         android:text="Not today"
         android:textColor="@color/white"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
