@@ -46,7 +46,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/rounded_background"
-        android:backgroundTint="#5500ff00"
+        android:backgroundTint="@color/background_gray"
         android:padding="16dp"
         >
         <LinearLayout
@@ -59,14 +59,15 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@id/fabButtonOpenClose"
             android:orientation="vertical"
+            android:gravity="center_horizontal"
             >
-        <TextView
-            android:id="@+id/tvEditComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit comment"
-            android:paddingBottom="16px"
-            />
+            <TextView
+                android:id="@+id/tvEditComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Edit comment"
+                android:padding="16dp"
+                />
         </LinearLayout>
 
         <ImageView

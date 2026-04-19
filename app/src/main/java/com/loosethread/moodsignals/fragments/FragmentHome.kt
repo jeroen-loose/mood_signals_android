@@ -66,7 +66,11 @@ class FragmentHome : Fragment() {
                 editDay(notificationTime.id)
                 //findNavController().navigate(R.id.action_HomeFragment_to_fragmentToday)
             }
-            tvNotificationTime.setPadding(0, 0, 0, 16)
+
+            val paddingInDp = 16
+            val scale = resources.displayMetrics.density
+            val paddingInPx = (paddingInDp * scale + 0.5f).toInt()
+            tvNotificationTime.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
             binding.fabOptions.addView(tvNotificationTime)
         }
         binding.fabButtonOpenClose.setOnClickListener { v ->
