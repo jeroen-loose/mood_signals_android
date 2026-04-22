@@ -1,5 +1,6 @@
 package com.loosethread.moodsignals.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -37,6 +38,10 @@ class FragmentHome : Fragment() {
                 chartFragment.selectDay(dayId)
             }
 
+            logFragment.onCommentSearchToggle = { searchVisible ->
+                toggleFab(!searchVisible)
+            }
+
             chartFragment.onDaySelected = { dayId ->
                 logFragment.selectDay(dayId)
             }
@@ -71,6 +76,7 @@ class FragmentHome : Fragment() {
             val scale = resources.displayMetrics.density
             val paddingInPx = (paddingInDp * scale + 0.5f).toInt()
             tvNotificationTime.setPadding(paddingInPx, paddingInPx, paddingInPx, paddingInPx)
+            tvNotificationTime.setTextColor(Color.parseColor("#ffffff"))
             binding.fabOptions.addView(tvNotificationTime)
         }
         binding.fabButtonOpenClose.setOnClickListener { v ->
@@ -80,6 +86,14 @@ class FragmentHome : Fragment() {
         binding.tvEditComment.setOnClickListener { v ->
             logFragment.showEditCommentDialog()
             //findNavController().navigate(R.id.action_HomeFragment_to_fragmentToday)
+        }
+    }
+
+    fun toggleFab(visible: Boolean) {
+        if (visible) {
+            binding.fab.visibility = View.VISIBLE
+        } else {
+            binding.fab.visibility = View.GONE
         }
     }
 

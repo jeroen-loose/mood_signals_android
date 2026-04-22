@@ -20,8 +20,6 @@ class FragmentAddSignal : Fragment() {
 
     private var _binding: FragmentAddSignalBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private val notificationTimes = Db.getNotificationTimes()
     private val categories = Db.getCategories()

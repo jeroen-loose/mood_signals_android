@@ -7,12 +7,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.loosethread.moodsignals.fragments.FragmentSingleDay
 import com.loosethread.moodsignals.datatypes.Day
+import com.loosethread.moodsignals.fragments.FragmentWeekChart
 
 class DaysLogPagerAdapter(
-    manager: FragmentManager,
+    private val manager: FragmentManager,
     lifecycle: Lifecycle,
     private val days: MutableList<Day>
 ): FragmentStateAdapter(manager, lifecycle) {
+    var onDaySelected: ((dayId: Int) -> Unit) ?= null
+    var onCommentSearchToggle: ((searchVisible: Boolean) -> Unit) ?= null
 
     override fun getItemCount(): Int = days.size
 
@@ -21,6 +24,13 @@ class DaysLogPagerAdapter(
         val arguments = bundleOf("dayId" to dayId)
         val result = FragmentSingleDay()
         result.arguments = arguments
+
+        result.onDaySelected = { id: Int ->
+            onDaySelected?.invoke(id)
+        }
+        result.onCommentSearchToggle = { searchVisible: Boolean ->
+            onCommentSearchToggle?.invoke(searchVisible)
+        }
 
         return result
     }
@@ -37,5 +47,12 @@ class DaysLogPagerAdapter(
 
     fun showEditCommentDialog(position: Int) {
 
+    }
+
+    fun disableCommentSearch(viewPagerPosition: Int) {
+        val tag = "f" + getItemId(viewPagerPosition)
+        val fragment = manager.findFragmentByTag(tag) as? FragmentSingleDay
+
+        fragment?.disableCommentSearch()
     }
 }

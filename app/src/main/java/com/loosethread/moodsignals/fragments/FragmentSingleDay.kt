@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.loosethread.moodsignals.FullWidthLinearLayoutManager
 import com.loosethread.moodsignals.R
+import com.loosethread.moodsignals.adapters.CommentSearchAdapter
 import com.loosethread.moodsignals.adapters.LogCategoriesAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.ItemDayLogBinding
@@ -25,6 +28,9 @@ class FragmentSingleDay(): Fragment() {
     private lateinit var categories: MutableList<LogCategory>
     private var _binding: ItemDayLogBinding? = null
     private val binding get() = _binding!!
+    var onDaySelected: ((dayId: Int) -> Unit) ?= null
+    var onCommentSearchToggle: ((searchVisible: Boolean) -> Unit) ?= null
+    var searchActive: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +51,22 @@ class FragmentSingleDay(): Fragment() {
         dividerItemDecoration.setDrawable(binding.root.context.getDrawable(R.drawable.blankline)!!)
         binding.rvCategories.addItemDecoration(dividerItemDecoration)
 
+        val commentAdapter = CommentSearchAdapter(Db.getComments())
+        commentAdapter.onDaySelected = { id: Int ->
+            onDaySelected?.invoke(id)
+            toggleCommentSearch()
+        }
+        binding.rvCommentSearch.adapter = commentAdapter
+        binding.rvCommentSearch.layoutManager =
+            FullWidthLinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
+        binding.rvCommentSearch.addItemDecoration(dividerItemDecoration)
+
+        binding.etCommentSearch.doOnTextChanged { text, _, _, _ ->
+            val searchText = text.toString()
+            val comments = Db.getComments(searchText)
+            commentAdapter.updateComments(comments)
+        }
+
         return binding.root
     }
 
@@ -53,6 +75,10 @@ class FragmentSingleDay(): Fragment() {
 
         binding.tvComment.text = day.comment
         binding.tvDate.text = DateHelper.formatForDisplay(day.date)
+
+        binding.llComment.setOnClickListener {
+            toggleCommentSearch()
+        }
     }
 
     override fun onResume() {
@@ -84,6 +110,28 @@ class FragmentSingleDay(): Fragment() {
                 Db.updateComment(dayId, day.comment)
                 binding.tvComment.text = day.comment
             }
+        }
+    }
+
+    fun toggleCommentSearch() {
+        if (searchActive) {
+            binding.rvCommentSearch.visibility = View.GONE
+            binding.tvComment.visibility = View.VISIBLE
+            binding.etCommentSearch.visibility = View.GONE
+            onCommentSearchToggle?.invoke(false)
+        } else {
+            binding.rvCommentSearch.visibility = View.VISIBLE
+            binding.tvComment.visibility = View.GONE
+            binding.etCommentSearch.visibility = View.VISIBLE
+            binding.etCommentSearch.requestFocus()
+            onCommentSearchToggle?.invoke(true)
+        }
+        searchActive = !searchActive
+    }
+
+    fun disableCommentSearch() {
+        if (searchActive) {
+            toggleCommentSearch()
         }
     }
 }

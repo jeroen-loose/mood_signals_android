@@ -67,6 +67,7 @@
                 android:layout_height="wrap_content"
                 android:text="Edit comment"
                 android:padding="16dp"
+                android:textColor="@color/white"
                 />
         </LinearLayout>
 

@@ -832,6 +832,46 @@ object Db {
         return result
     }
 
+    fun getComments(searchString: String? = null) : MutableMap<Int, String> {
+        val db = helper.readableDatabase
+        val result = mutableMapOf<Int, String>()
+
+        var query = "SELECT ${DbC.DayComment.TBL}.${DbC.DayComment.COL_COMMENT}, " +
+                "${DbC.Day.TBL}.${DbC.Day.COL_DATE}," +
+                "${DbC.Day.TBL}.${BaseColumns._ID} as dayId " +
+                "FROM ${DbC.DayComment.TBL} " +
+                "LEFT JOIN ${DbC.Day.TBL} " +
+                "ON ${DbC.DayComment.TBL}.${DbC.DayComment.COL_DAY_ID} = " +
+                "${DbC.Day.TBL}.${BaseColumns._ID} "
+        if (searchString != null) {
+            query += "WHERE ${DbC.DayComment.COL_COMMENT} LIKE ? "
+        }
+
+        query += "ORDER BY ${DbC.Day.TBL}.${DbC.Day.COL_DATE} DESC"
+
+        var params: Array<String>? = null
+        if (searchString != null) {
+            params = arrayOf("%$searchString%")
+        }
+
+        val c = db.rawQuery(query, params)
+
+        with (c) {
+            while (moveToNext()) {
+                val comment = getString(getColumnIndexOrThrow("date")) +
+                ": " +
+                getString(getColumnIndexOrThrow("comment"))
+               result.set(
+                   getInt(getColumnIndexOrThrow("dayId")),
+                  comment
+               )
+            }
+            close()
+        }
+
+        return result
+    }
+
     fun getDays() : MutableList<Day> {
         val db = helper.readableDatabase
         val query = "SELECT ${DbC.Day.TBL}.${BaseColumns._ID} as day_id, " +
