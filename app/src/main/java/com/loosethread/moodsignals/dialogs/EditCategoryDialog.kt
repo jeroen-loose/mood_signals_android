@@ -23,7 +23,8 @@ class EditCategoryDialog : DialogFragment() {
             etDescription.setText(description)
 
             builder.setView(dialogView)
-                .setPositiveButton("OK",
+                .setPositiveButton(
+                    getString(R.string.ok),
                     DialogInterface.OnClickListener { dialog, id ->
                         val requestKey = arguments?.getString("requestKey") ?: "edit_category_request"
                         val resultBundle = Bundle().apply {
@@ -33,7 +34,7 @@ class EditCategoryDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })

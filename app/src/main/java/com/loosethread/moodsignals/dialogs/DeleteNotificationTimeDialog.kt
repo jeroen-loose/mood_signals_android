@@ -29,12 +29,12 @@ class DeleteNotificationTimeDialog : DialogFragment() {
             val tvConfirm = dialogView.findViewById<TextView>(R.id.tvConfirm)
             val spinner = dialogView.findViewById<Spinner>(R.id.spReplacementNotificationTime)
 
-            var confirmationText = "Are you sure you want to delete the nontification \"${notificationTime.title}\"?"
+            var confirmationText = String.format(getString(R.string.confirm_delete_notification), notificationTime.title)
             val notificationTimeHasSignals = Db.notificationTimeHasSignals(id)
 
             if (notificationTimeHasSignals) {
-                confirmationText += "\n\nThis notification has signals associated with it."
-                confirmationText += "\n\nPlease select a replacement notification to assign to these signals."
+                confirmationText += getString(R.string.notification_has_signals)
+                confirmationText += getString(R.string.select_replacement_notification)
 
                 spinner.visibility = Spinner.VISIBLE
                 val notificationTimes = Db.getNotificationTimes(id)
@@ -48,7 +48,7 @@ class DeleteNotificationTimeDialog : DialogFragment() {
             tvConfirm.setText(confirmationText)
 
             builder.setView(dialogView)
-                .setPositiveButton("Delete",
+                .setPositiveButton(getString(R.string.add),
                     DialogInterface.OnClickListener { dialog, id ->
                         val requestKey = arguments?.getString("requestKey") ?: "edit_notification_time_request"
                         val resultBundle = Bundle().apply {
@@ -60,7 +60,7 @@ class DeleteNotificationTimeDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })

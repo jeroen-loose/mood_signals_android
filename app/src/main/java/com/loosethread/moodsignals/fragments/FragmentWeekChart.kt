@@ -42,13 +42,13 @@ class FragmentWeekChart : Fragment() {
                 val chartContainer = binding.root.findViewById<View>(resources.getIdentifier("chartContainer$i", "id", requireContext().packageName))
 
                 tvDayOfWeek.text = when (i) {
-                    1 -> "M"
-                    2 -> "T"
-                    3 -> "W"
-                    4 -> "T"
-                    5 -> "F"
-                    6 -> "S"
-                    7 -> "S"
+                    1 -> getString(R.string.monday_short)
+                    2 -> getString(R.string.tuesday_short)
+                    3 -> getString(R.string.wednesday_short)
+                    4 -> getString(R.string.thursday_short)
+                    5 -> getString(R.string.friday_short)
+                    6 -> getString(R.string.saturday_short)
+                    7 -> getString(R.string.sunday_short)
                     else -> {
                         ""
                     }

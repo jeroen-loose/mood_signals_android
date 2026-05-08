@@ -971,8 +971,4 @@ object Db {
     fun reset() {
         helper.reset()
     }
-
-    fun addCategories() {
-        helper.addCategories()
-    }
 }

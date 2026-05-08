@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.adapters.TodayAdapter
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentTodayBinding
@@ -65,7 +66,7 @@ class FragmentToday : Fragment() {
         todayAdapter.onCategoryId = { categoryId ->
             val categoryName = when {
                 categoryId > 0 -> Db.getCategory(categoryId).description
-                else -> "Uncategorized"
+                else -> getString(R.string.uncategorized)
             }
 
             binding.tvCategoryName.text = categoryName

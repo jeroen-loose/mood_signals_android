@@ -33,7 +33,7 @@ class EditCommentDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })

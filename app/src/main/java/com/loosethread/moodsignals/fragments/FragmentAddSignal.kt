@@ -1,6 +1,5 @@
 package com.loosethread.moodsignals.fragments
 
-import android.R
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
 import com.loosethread.moodsignals.datatypes.NotificationTime
@@ -37,20 +37,20 @@ class FragmentAddSignal : Fragment() {
         val category: Spinner = binding.spCategory
         ArrayAdapter(
             requireContext(),
-            R.layout.simple_spinner_item,
+            android.R.layout.simple_spinner_item,
             categories
         ).also { categoryAdapter ->
-            categoryAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+            categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             category.adapter = categoryAdapter
         }
 
         val notificationTime: Spinner = binding.spNotificationTime
         ArrayAdapter(
             requireContext(),
-            R.layout.simple_spinner_item,
+            android.R.layout.simple_spinner_item,
             notificationTimes
         ).also { notificationTimeAdapter ->
-                notificationTimeAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+                notificationTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 notificationTime.adapter = notificationTimeAdapter
         }
 
@@ -69,7 +69,7 @@ class FragmentAddSignal : Fragment() {
             notificationTimes.find { it.id == signal.notificationTimeId }?.let {
                 binding.spNotificationTime.setSelection(notificationTimes.indexOf(it))
             }
-            binding.btnAdd.text = "Save"
+            binding.btnAdd.text = getString(R.string.save)
             binding.btnAdd.tag = id
         }
 

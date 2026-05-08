@@ -66,7 +66,7 @@ class FragmentHome : Fragment() {
         val notificationTimes = Db.getNotificationTimes()
         for (notificationTime in notificationTimes) {
             val tvNotificationTime = TextView(requireContext())
-            tvNotificationTime.text = "Run '" + notificationTime.title + "'"
+            tvNotificationTime.text = String.format(getString(R.string.run_notification_time), notificationTime.title)
             tvNotificationTime.setOnClickListener {
                 editDay(notificationTime.id)
                 //findNavController().navigate(R.id.action_HomeFragment_to_fragmentToday)

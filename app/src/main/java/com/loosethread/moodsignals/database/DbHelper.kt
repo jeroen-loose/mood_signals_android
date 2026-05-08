@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
+import com.loosethread.moodsignals.R
 
 class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     private val SQL_CREATE_ENTRIES = arrayOf(
@@ -62,41 +63,22 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                "${DbC.NotificationTime.COL_QUESTION}, " +
                 "${DbC.NotificationTime.COL_TIME}" +
                 ") VALUES " +
-                "('Morning', 'How did you sleep?', '07:30'), " +
-                "('Evening', 'How was your day?', '21:00')",
+                "('" + context.getString(R.string.morning) + "', '" + context.getString(R.string.how_did_you_sleep) + "', '07:30'), " +
+                "('" + context.getString(R.string.evening) + "', '" + context.getString(R.string.how_was_your_day) + "', '21:00')",
 
         "INSERT INTO ${DbC.SignalCategory.TBL} (" +
                 "${DbC.SignalCategory.COL_DESCRIPTION}" +
                 ") VALUES " +
-                "('Uncategorized'), " +
-                "('Energy'), " +
-                "('Mood'), " +
-                "('Social'), " +
-                "('Tasks'), " +
-                "('Sleep')," +
-                "('Self-Care')," +
-                "('Work')," +
-                "('Stress')"
+                "('" + context.getString(R.string.uncategorized) + "'), " +
+                "('" + context.getString(R.string.energy) + "'), " +
+                "('" + context.getString(R.string.mood) + "'), " +
+                "('" + context.getString(R.string.social) + "'), " +
+                "('" + context.getString(R.string.tasks) + "'), " +
+                "('" + context.getString(R.string.sleep) + "')," +
+                "('" + context.getString(R.string.self_care) + "')," +
+                "('" + context.getString(R.string.work) + "')," +
+                "('" + context.getString(R.string.stress) + "')"
 
-    )
-
-    private val SQL_ENABLE_CATEGORIES_ENTRIES = arrayOf(
-        "CREATE TABLE IF NOT EXISTS ${DbC.SignalCategory.TBL} (" +
-                "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-                "${DbC.SignalCategory.COL_DESCRIPTION} TEXT NOT NULL" +
-                ")",
-
-        "ALTER TABLE ${DbC.Signal.TBL} ADD ${DbC.Signal.COL_CATEGORY_ID} INTEGER",
-
-        "INSERT INTO ${DbC.SignalCategory.TBL} (" +
-                "${DbC.SignalCategory.COL_DESCRIPTION}" +
-                ") VALUES " +
-                "('Social'), " +
-                "('Tasks'), " +
-                "('Sleep')," +
-                "('Self-Care')," +
-                "('Work')," +
-                "('Stress')"
     )
 
     private val SQL_DELETE_ENTRIES = arrayOf(
@@ -130,11 +112,5 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     fun reset() {
         onUpgrade(writableDatabase, 1, 1)
-    }
-
-    fun addCategories() {
-        for(sql in SQL_ENABLE_CATEGORIES_ENTRIES) {
-            writableDatabase.execSQL(sql)
-        }
     }
 }

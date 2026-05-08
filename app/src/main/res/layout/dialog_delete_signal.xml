@@ -15,7 +15,7 @@
         android:id="@+id/cbDeletePermanently"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete Permanently"
+        android:text="@string/delete_permanently"
         android:visibility="gone"
         />
 </LinearLayout>

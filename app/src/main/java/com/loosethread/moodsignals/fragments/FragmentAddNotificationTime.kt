@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.loosethread.moodsignals.R
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddNotificationTimeBinding
 import com.loosethread.moodsignals.datatypes.NotificationTime
@@ -33,7 +34,7 @@ class FragmentAddNotificationTime : Fragment() {
             binding.etQuestion.setText(notificationTime.question)
             binding.tpTime.hour = notificationTime.time!!.substring(0, 2).toInt()
             binding.tpTime.minute = notificationTime.time!!.substring(3, 5).toInt()
-            binding.btnAdd.text = "Save"
+            binding.btnAdd.text = getString(R.string.save)
             binding.btnAdd.tag = id
         }
 

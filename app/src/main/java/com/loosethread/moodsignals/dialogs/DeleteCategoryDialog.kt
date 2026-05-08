@@ -27,12 +27,12 @@ class DeleteCategoryDialog : DialogFragment() {
             val tvConfirm = dialogView.findViewById<TextView>(R.id.tvConfirm)
             val spinner = dialogView.findViewById<Spinner>(R.id.spReplacementCategory)
 
-            var confirmationText = "Are you sure you want to delete the category ${category.description}?"
+            var confirmationText = String.format(getString(R.string.confirm_delete_category), category.description)
             val categoryHasSignals = Db.categoryHasSignals(id)
 
             if (categoryHasSignals) {
-                confirmationText += "\n\nThis category has signals associated with it."
-                confirmationText += "\n\nPlease select a replacement category to assign to these signals."
+                confirmationText += getString(R.string.category_has_associated_signals)
+                confirmationText += getString(R.string.select_replacement_category)
 
                 spinner.visibility = Spinner.VISIBLE
                 val categories = Db.getCategories(id)
@@ -46,7 +46,8 @@ class DeleteCategoryDialog : DialogFragment() {
             tvConfirm.setText(confirmationText)
 
             builder.setView(dialogView)
-                .setPositiveButton("Delete",
+                .setPositiveButton(
+                    getString(R.string.delete),
                     DialogInterface.OnClickListener { dialog, id ->
                         val requestKey = arguments?.getString("requestKey") ?: "edit_category_request"
                         val resultBundle = Bundle().apply {
@@ -58,7 +59,8 @@ class DeleteCategoryDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(
+                    getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })

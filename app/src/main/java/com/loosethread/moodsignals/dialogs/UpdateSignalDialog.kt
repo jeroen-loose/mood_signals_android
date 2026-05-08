@@ -24,7 +24,7 @@ class UpdateSignalDialog : DialogFragment() {
             val updatePermanently = binding.cbUpdateSignal
 
             builder.setView(dialogView)
-                .setPositiveButton("Save",
+                .setPositiveButton(getString(R.string.save),
                     DialogInterface.OnClickListener { dialog, id ->
                         val requestKey = arguments?.getString("requestKey") ?: "update_signal_request"
                         val resultBundle = Bundle().apply {
@@ -34,7 +34,7 @@ class UpdateSignalDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })

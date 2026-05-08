@@ -25,12 +25,12 @@ class DeleteSignalDialog : DialogFragment() {
             val tvConfirm = dialogView.findViewById<TextView>(R.id.tvConfirm)
             val deletePermanently = dialogView.findViewById<CheckBox>(R.id.cbDeletePermanently)
 
-            var confirmationText = "Are you sure you want to delete the signal ${signal.description}?"
+            var confirmationText = String.format(getString(R.string.confirm_delete_signal), signal.description)
             val signalHasEntries = Db.signalHasEntries(id)
 
             if (signalHasEntries) {
-                confirmationText += "\n\nYou already have entries for this signal."
-                confirmationText += "\n\nBy default, this signal will be archived to keep the data for previous days.  You can delete it permanently by checking the box below."
+                confirmationText += getString(R.string.signal_has_entries)
+                confirmationText += getString(R.string.signal_default_action_archive)
 
                 deletePermanently.visibility = CheckBox.VISIBLE
             }
@@ -39,7 +39,7 @@ class DeleteSignalDialog : DialogFragment() {
             tvConfirm.setText(confirmationText)
 
             builder.setView(dialogView)
-                .setPositiveButton("Delete",
+                .setPositiveButton(getString(R.string.delete),
                     DialogInterface.OnClickListener { dialog, id ->
                         val requestKey = arguments?.getString("requestKey") ?: "delete_signal_request"
                         val resultBundle = Bundle().apply {
@@ -51,7 +51,7 @@ class DeleteSignalDialog : DialogFragment() {
                         setFragmentResult(requestKey, resultBundle)
                         dismiss()
                     })
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.cancel),
                     DialogInterface.OnClickListener { dialog, id ->
                         getDialog()?.cancel()
                     })
