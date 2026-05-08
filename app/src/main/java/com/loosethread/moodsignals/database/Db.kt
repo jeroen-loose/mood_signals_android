@@ -136,7 +136,7 @@ object Db {
         val db = helper.readableDatabase
 
         val query =
-            "SELECT * FROM ${DbC.SignalValue.TBL} WHERE ${DbC.SignalValue.COL_SIGNAL_ID} = ? LIMIT 0,1"
+            "SELECT * FROM ${DbC.DaySignalValue.TBL} WHERE ${DbC.DaySignalValue.COL_SIGNAL_ID} = ? LIMIT 0,1"
         val params = arrayOf(id.toString())
         val c = db.rawQuery(query, params)
         val result = c.count > 0

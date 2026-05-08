@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.loosethread.moodsignals.database.Db
 import com.loosethread.moodsignals.databinding.FragmentAddSignalBinding
@@ -15,6 +16,8 @@ import com.loosethread.moodsignals.datatypes.NotificationTime
 import com.loosethread.moodsignals.datatypes.Signal
 import com.loosethread.moodsignals.datatypes.SignalCategory
 import com.loosethread.moodsignals.datatypes.SignalScore
+import com.loosethread.moodsignals.dialogs.DeleteSignalDialog
+import com.loosethread.moodsignals.dialogs.UpdateSignalDialog
 
 class FragmentAddSignal : Fragment() {
 
@@ -23,6 +26,7 @@ class FragmentAddSignal : Fragment() {
     private val binding get() = _binding!!
     private val notificationTimes = Db.getNotificationTimes()
     private val categories = Db.getCategories()
+    private lateinit var signal : Signal
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +57,7 @@ class FragmentAddSignal : Fragment() {
         val id = getArguments()?.getInt("id")
 
         id?.let {
-            val signal = Db.getSignal(id)
+            signal = Db.getSignal(id)
             binding.etSignalName.setText(signal.description)
             binding.etSignalScore1.setText(signal.scores[0].description)
             binding.etSignalScore2.setText(signal.scores[1].description)
@@ -82,7 +86,7 @@ class FragmentAddSignal : Fragment() {
             scores.add(SignalScore(2, binding.etSignalScore2.text.toString()))
             scores.add(SignalScore(3, binding.etSignalScore3.text.toString()))
 
-            val signal = Signal(
+            val newSignal = Signal(
                 null,
                 binding.etSignalName.text.toString(),
                 scores,
@@ -91,17 +95,52 @@ class FragmentAddSignal : Fragment() {
                 (binding.spNotificationTime.selectedItem as NotificationTime).id!!
             )
             if(binding.btnAdd.tag != null) {
-                signal.id = binding.btnAdd.tag as Int?
-                Db.updateSignal(signal)
+                newSignal.id = binding.btnAdd.tag as Int?
+                if (Db.signalHasEntries(signal.id!!) && hasChanged(newSignal, signal)) {
+                    val requestKeyUpdate = "update_signal${signal.id}"
+                    val dialog = UpdateSignalDialog()
+                    dialog.arguments = bundleOf(
+                        "requestKey" to requestKeyUpdate
+                    )
+                    dialog.show(childFragmentManager, "UpdateSignalFragment${signal.id}")
+
+                    childFragmentManager.setFragmentResultListener(
+                        requestKeyUpdate,
+                        viewLifecycleOwner
+                    ) { _, bundle ->
+                        val updated = bundle.getBoolean("isUpdated", false)
+                        if (updated) {
+                            val updatedPermanently = bundle.getBoolean("isUpdatedPermanently", false)
+                            if (updatedPermanently) {
+                                Db.updateSignal(newSignal)
+                            } else {
+                                Db.deleteSignal(signal.id!!, true)
+                                Db.addSignal(newSignal)
+                            }
+                        }
+                        findNavController().popBackStack()
+                    }
+
+                } else {
+                    Db.updateSignal(newSignal)
+                    findNavController().popBackStack()
+                }
             } else {
-                Db.addSignal(signal)
+                Db.addSignal(newSignal)
+                findNavController().popBackStack()
             }
-            findNavController().popBackStack()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun hasChanged(newSignal: Signal, oldSignal: Signal) : Boolean {
+        return newSignal.description != oldSignal.description ||
+                newSignal.scores[0].description != oldSignal.scores[0].description ||
+                newSignal.scores[1].description != oldSignal.scores[1].description ||
+                newSignal.scores[2].description != oldSignal.scores[2].description
     }
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This signal has been used for past entries.  By default, this signal will be archived to keep the data for previous days, and a new one will be created.  You can choose to skip this behavior and update past entries as well by checking the box below."
+        />
+
+    <CheckBox
+        android:id="@+id/cbUpdateSignal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update for past entries"
+        />
+</LinearLayout>
