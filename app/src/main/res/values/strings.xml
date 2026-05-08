@@ -60,5 +60,6 @@
     <string name="self_care">Self-Care</string>
     <string name="work">Work</string>
     <string name="stress">Stress</string>
+    <string name="not_today">Not today</string>
 
 </resources>

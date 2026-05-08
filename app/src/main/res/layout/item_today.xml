@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/background_gray"
-        android:text="Not today"
+        android:text="@string/not_today"
         android:textColor="@color/white"
         />
 
