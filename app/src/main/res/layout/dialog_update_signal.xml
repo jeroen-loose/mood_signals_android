@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="This signal has been used for past entries.  By default, this signal will be archived to keep the data for previous days, and a new one will be created.  You can choose to skip this behavior and update past entries as well by checking the box below."
+        style="@style/dialogtext"
         />
 
     <CheckBox
